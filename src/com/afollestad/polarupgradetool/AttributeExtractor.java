@@ -71,7 +71,7 @@ public class AttributeExtractor {
 
     public HashMap<String, String> find() {
         if (!mFile.exists()) {
-            Main.LOG("File %s does not exist.", mFile.getAbsolutePath());
+            Main.LOG("[ERROR]: File %s does not exist.", mFile.getAbsolutePath());
             return null;
         }
 
