@@ -69,7 +69,7 @@ public class GradleMigrator {
             Util.closeQuietely(os);
         }
 
-        Main.LOG("[INFO] Migrated Gradle file %s", Main.cleanupPath(mFile.getAbsolutePath()));
+        Main.LOG("[INFO]: Migrated Gradle file %s", Main.cleanupPath(mFile.getAbsolutePath()));
         return true;
     }
 }

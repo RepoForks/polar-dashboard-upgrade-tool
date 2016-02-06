@@ -26,9 +26,8 @@ public class Main extends MainBase {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void main(String[] args) {
         CURRENT_DIR = new File(System.getProperty("user.dir"));
-
         getPrinter(Ansi.FColor.YELLOW, Ansi.BColor.BLACK).println(
-                "\n--------------------------------------\n| Welcome to the Polar upgrade tool! |\n--------------------------------------");
+                "\n--------------------------------------\n| Welcome to the Polar upgrade tool! |\n--------------------------------------\n");
 
         // Use app/build.gradle and /res/values/strings.xml to load info about icon pack
         File gradleFile = new File(CURRENT_DIR, GRADLE_FILE_PATH);
@@ -38,9 +37,15 @@ public class Main extends MainBase {
                 String.format("%s%s%s%s%s", RES_FOLDER_PATH, File.separator, "values", File.separator, "strings.xml")),
                 new String[]{"string"}, new String[]{"app_name"});
         HashMap<String, String> gradleAttrs = gradleExtractor.find();
-        if (gradleAttrs == null) return;
+        if (gradleAttrs == null) {
+            resetColor();
+            return;
+        }
         HashMap<String, String> stringsAttrs = stringsExtractor.find();
-        if (stringsAttrs == null) return;
+        if (stringsAttrs == null) {
+            resetColor();
+            return;
+        }
 
         USER_APPNAME = stringsAttrs.get("app_name");
         USER_PACKAGE = gradleAttrs.get("applicationId");
@@ -51,7 +56,7 @@ public class Main extends MainBase {
 
         // Download latest code
         if (!downloadArchive()) {
-            LOG(""); // resets foreground color
+            resetColor();
             return;
         }
 
@@ -81,9 +86,10 @@ public class Main extends MainBase {
         GradleMigrator gradleMigrator = new GradleMigrator(source,
                 new String[]{"applicationId", "versionCode", "versionName"},
                 new String[]{String.format("\"%s\"", USER_PACKAGE), USER_VERSION_CODE, String.format("\"%s\"", USER_VERSION_NAME)});
-        if (!gradleMigrator.process()) return;
-
-        // TODO migrate app/build.gradle
+        if (!gradleMigrator.process()) {
+            resetColor();
+            return;
+        }
 
         // Copy licensing module
         LOG("[INFO]: Migrating the licensing module...");
@@ -176,30 +182,49 @@ public class Main extends MainBase {
             }
         });
 
-        // Migrate the black listed files
+        // Migrate the files ignored during direct copy
         File projectValues = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "values");
         File latestValues = new File(new File(EXTRACTED_ZIP_ROOT, RES_FOLDER_PATH), "values");
         XmlMigrator migrator = new XmlMigrator(
                 new File(projectValues, "strings.xml"), new File(latestValues, "strings.xml"));
-        if (!migrator.process()) return;
+        if (!migrator.process()) {
+            resetColor();
+            return;
+        }
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_about.xml"), new File(latestValues, "dev_about.xml"));
-        if (!migrator.process()) return;
+        if (!migrator.process()) {
+            resetColor();
+            return;
+        }
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_changelog.xml"), new File(latestValues, "dev_changelog.xml"));
-        if (!migrator.process()) return;
+        if (!migrator.process()) {
+            resetColor();
+            return;
+        }
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_customization.xml"), new File(latestValues, "dev_customization.xml"));
-        if (!migrator.process()) return;
+        if (!migrator.process()) {
+            resetColor();
+            return;
+        }
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_theming.xml"), new File(latestValues, "dev_theming.xml"));
-        if (!migrator.process()) return;
+        if (!migrator.process()) {
+            resetColor();
+            return;
+        }
 
         System.out.println();
-        getPrinter(Ansi.FColor.BLUE, Ansi.BColor.BLACK).print(
+        getPrinter(Ansi.FColor.YELLOW, Ansi.BColor.BLACK).print(
                 String.format("Upgrade is complete for %s!", USER_APPNAME));
-        getPrinter(Ansi.FColor.WHITE, Ansi.BColor.BLACK).println(" ");
+        resetColor();
         EXTRACTED_ZIP_ROOT.delete();
+    }
+
+    private static void resetColor() {
+        getPrinter(Ansi.FColor.WHITE, Ansi.BColor.BLACK).println(" ");
     }
 
     private static boolean isBlacklisted(File file) {

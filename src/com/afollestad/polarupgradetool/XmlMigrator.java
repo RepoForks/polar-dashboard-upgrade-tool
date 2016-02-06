@@ -42,8 +42,11 @@ public class XmlMigrator {
                 final String elementName = AttributeExtractor.getTagName(line);
                 if (elementName == null || elementName.equals("resources")) continue;
                 final String attributeName = AttributeExtractor.getAttributeValue("name", line);
-                final String elementValue = AttributeExtractor.getElementValue(line);
-                mSourceValues.put(attributeName, elementValue);
+                if (attributeName != null) {
+                    final String elementValue = AttributeExtractor.getElementValue(line);
+                    if (elementValue != null)
+                        mSourceValues.put(attributeName, elementValue);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
