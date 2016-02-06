@@ -37,7 +37,7 @@ public class GradleMigrator {
                     final String propertyName = mPropertyNames.get(i);
                     int start = line.indexOf(propertyName + " ");
                     if (start == -1) continue;
-                    line = propertyName + " " + mPropertyValues.get(i);
+                    line = String.format("        %s %s", propertyName, mPropertyValues.get(i));
                 }
                 lines.add(line);
             }

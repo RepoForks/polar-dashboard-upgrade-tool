@@ -208,7 +208,7 @@ public class Main extends MainBase {
             resetColor();
             return;
         }
-        
+
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_customization.xml"), new File(latestValues, "dev_customization.xml"));
         if (!migrator.process()) {
