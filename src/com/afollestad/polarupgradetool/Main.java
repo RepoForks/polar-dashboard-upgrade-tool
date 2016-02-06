@@ -197,12 +197,18 @@ public class Main extends MainBase {
             resetColor();
             return;
         }
-        migrator = new XmlMigrator(
-                new File(projectValues, "dev_changelog.xml"), new File(latestValues, "dev_changelog.xml"));
+
+        File projectChangelog = new File(projectValues, "dev_changelog.xml");
+        File latestChangelog = new File(latestValues, "dev_changelog.xml");
+        if (!projectChangelog.exists())
+            FileUtil.copyFolder(latestChangelog, projectChangelog, null);
+
+        migrator = new XmlMigrator(projectChangelog, latestChangelog);
         if (!migrator.process()) {
             resetColor();
             return;
         }
+        
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_customization.xml"), new File(latestValues, "dev_customization.xml"));
         if (!migrator.process()) {
