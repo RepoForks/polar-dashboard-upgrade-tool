@@ -9,21 +9,21 @@ import java.util.HashMap;
  */
 public class XmlMigrator {
 
-    private final File mSource;
-    private final File mDest;
+    private final File mProject;
+    private final File mLatest;
 
     public XmlMigrator(File project, File latest) {
-        mSource = project;
-        mDest = latest;
+        mProject = project;
+        mLatest = latest;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public boolean process() {
-        if (!mSource.exists()) {
-            Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mSource.getAbsolutePath()));
+        if (!mProject.exists()) {
+            Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mProject.getAbsolutePath()));
             return false;
-        } else if (!mDest.exists()) {
-            Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mDest.getAbsolutePath()));
+        } else if (!mLatest.exists()) {
+            Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mLatest.getAbsolutePath()));
             return false;
         }
 
@@ -35,7 +35,7 @@ public class XmlMigrator {
         // Read cache of values from the project (source) file, so they are maintained through migration
         final HashMap<String, String> mSourceValues = new HashMap<>();
         try {
-            is = new FileInputStream(mSource);
+            is = new FileInputStream(mProject);
             reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -60,7 +60,7 @@ public class XmlMigrator {
         // Read the contents of the latest (destination) file to ArrayList
         final ArrayList<String> destLines = new ArrayList<>();
         try {
-            is = new FileInputStream(mDest);
+            is = new FileInputStream(mLatest);
             reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -84,12 +84,12 @@ public class XmlMigrator {
 
         // Write processed lines back to the project (source) file
         try {
-            mSource.delete();
-            os = new FileOutputStream(mSource);
+            mProject.delete();
+            os = new FileOutputStream(mProject);
             writer = new BufferedWriter(new OutputStreamWriter(os));
             for (int i = 0; i < destLines.size(); i++) {
                 if (i > 0) writer.newLine();
-                writer.write(destLines.size());
+                writer.write(destLines.get(i));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,7 +100,7 @@ public class XmlMigrator {
             Util.closeQuietely(os);
         }
 
-        Main.LOG("[INFO]: Migrated %s", Main.cleanupPath(mSource.getAbsolutePath()));
+        Main.LOG("[INFO]: Migrated %s", Main.cleanupPath(mProject.getAbsolutePath()));
         return true;
     }
 }
