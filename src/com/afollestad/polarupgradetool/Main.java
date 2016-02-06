@@ -236,7 +236,8 @@ public class Main extends MainBase {
             return file.getName().equals("list_item_about_dev.xml") ||
                     (file.getName().startsWith("dev_") && file.getName().endsWith(".xml")) ||
                     file.getName().equals("theme_config.xml") ||
-                    file.getName().equals("strings.xml");
+                    file.getName().equals("strings.xml") ||
+                    file.getName().equals("fragment_homepage.xml");
         }
     }
 }
