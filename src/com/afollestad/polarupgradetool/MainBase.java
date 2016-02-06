@@ -38,10 +38,8 @@ class MainBase {
         Ansi.FColor color;
         if (msg.startsWith("[ERROR]")) {
             color = Ansi.FColor.RED;
-        } else if (msg.startsWith("[INFO]") || msg.startsWith("[DETECTED]")) {
+        } else if (msg.startsWith("[INFO]") || msg.startsWith("[DETECTED]") || msg.startsWith("[RENAMING]")) {
             color = Ansi.FColor.CYAN;
-        } else if (msg.startsWith("[RENAMING]")) {
-            color = Ansi.FColor.BLUE;
         } else {
             color = Ansi.FColor.WHITE;
         }
@@ -82,7 +80,12 @@ class MainBase {
 
             long contentLength;
             try {
-                contentLength = Long.parseLong(conn.getHeaderField("Content-Length"));
+                final String contentLengthStr = conn.getHeaderField("Content-Length");
+                if (contentLengthStr == null || contentLengthStr.trim().isEmpty()) {
+                    LOG("[ERROR]: No Content-Length header was returned by GitHub. Try running this app again.");
+                    return false;
+                }
+                contentLength = Long.parseLong(contentLengthStr);
             } catch (Throwable e) {
                 e.printStackTrace();
                 LOG("[ERROR]: Failed to get the size of Polar's latest code archive. Please try running this app again.", e.getMessage());

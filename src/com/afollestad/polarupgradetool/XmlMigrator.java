@@ -46,6 +46,7 @@ public class XmlMigrator {
                 mSourceValues.put(attributeName, elementValue);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             return false;
         } finally {
@@ -70,6 +71,7 @@ public class XmlMigrator {
                 destLines.add(line);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             return false;
         } finally {
@@ -87,6 +89,7 @@ public class XmlMigrator {
                 writer.write(destLines.size());
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             return false;
         } finally {

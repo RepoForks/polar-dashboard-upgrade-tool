@@ -4,7 +4,6 @@ import print.color.Ansi;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -28,7 +27,7 @@ public class Main extends MainBase {
     public static void main(String[] args) {
         CURRENT_DIR = new File(System.getProperty("user.dir"));
 
-        getPrinter(Ansi.FColor.BLUE, Ansi.BColor.BLACK).println(
+        getPrinter(Ansi.FColor.YELLOW, Ansi.BColor.BLACK).println(
                 "\n--------------------------------------\n| Welcome to the Polar upgrade tool! |\n--------------------------------------");
 
         // Use app/build.gradle and /res/values/strings.xml to load info about icon pack
@@ -47,12 +46,8 @@ public class Main extends MainBase {
         USER_PACKAGE = gradleAttrs.get("applicationId");
         USER_VERSION_NAME = gradleAttrs.get("versionName");
         USER_VERSION_CODE = gradleAttrs.get("versionCode");
-        LOG("[DETECTED]: app_name = %s, applicationId = %s, versionName = %s, versionCode = %s\n",
+        LOG("[DETECTED]: app_name = %s, applicationId = %s, versionName = %s, versionCode = %s",
                 USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
-
-        LOG("[INFO]: This application will download the latest version of Polar and migrate changes in your project. Press enter to start...");
-        Scanner in = new Scanner(System.in);
-        in.nextLine();
 
         // Download latest code
         if (!downloadArchive()) {

@@ -27,9 +27,10 @@ public class AttributeExtractor {
 
     public static String getTagName(String line) {
         int start = line.indexOf('<');
-        if (start == -1) return null;
+        if (start < 0) return null;
         start += 1;
         int end = line.indexOf(' ', start);
+        if (end < 0) return null;
         return line.substring(start, end);
     }
 
@@ -47,12 +48,22 @@ public class AttributeExtractor {
     }
 
     public static String getElementValue(String line) {
-        return line.substring(line.indexOf('>') + 1, line.lastIndexOf('<'));
+        try {
+            int start = line.indexOf('>');
+            if (start < 0) return null;
+            int end = line.lastIndexOf('<');
+            if (end < 0) return null;
+            return line.substring(start + 1, end);
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     public static String setElementValue(String line, String value) {
         int start = line.indexOf('>') + 1;
+        if (start < 0) return null;
         int end = line.lastIndexOf('<');
+        if (end < 0) return null;
         StringBuilder sb = new StringBuilder(line);
         sb.replace(start, end, value);
         return sb.toString();
