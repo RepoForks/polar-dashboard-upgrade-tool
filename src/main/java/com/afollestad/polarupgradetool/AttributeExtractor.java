@@ -2,6 +2,7 @@ package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

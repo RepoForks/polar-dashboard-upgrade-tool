@@ -2,6 +2,7 @@ package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -76,7 +77,7 @@ public class GradleMigrator {
 
         Main.LOG("[INFO]: Migrated Gradle file %s", Main.cleanupPath(mFile.getAbsolutePath()));
         if (uiCallback != null)
-            uiCallback.onStatusUpdate("Migrated Gradle file:\n" + Main.cleanupPath(mFile.getAbsoluteFile()));
+            uiCallback.onStatusUpdate("Migrated Gradle file:\n" + Main.cleanupPath(mFile.getAbsolutePath()));
         return true;
     }
 }

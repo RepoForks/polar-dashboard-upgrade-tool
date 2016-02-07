@@ -1,5 +1,6 @@
 package com.afollestad.polarupgradetool;
 
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
