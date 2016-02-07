@@ -1,7 +1,6 @@
 package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
-import print.color.Ansi;
 
 import java.io.File;
 import java.util.HashMap;
@@ -28,8 +27,9 @@ public class Main extends MainBase {
     public static void upgrade(String projectPath, UICallback uiCallback) {
         //CURRENT_DIR = new File(System.getProperty("user.dir"));
         CURRENT_DIR = new File(projectPath);
-        getPrinter(Ansi.FColor.YELLOW, Ansi.BColor.BLACK).println(
-                "\n--------------------------------------\n| Welcome to the Polar upgrade tool! |\n--------------------------------------\n");
+        System.out.println("\n--------------------------------------\n" +
+                "| Welcome to the Polar upgrade tool! |\n" +
+                "--------------------------------------\n");
 
         // Use app/build.gradle and /res/values/strings.xml to load info about icon pack
         File gradleFile = new File(CURRENT_DIR, GRADLE_FILE_PATH);
@@ -39,15 +39,9 @@ public class Main extends MainBase {
                 String.format("%s%s%s%s%s", RES_FOLDER_PATH, File.separator, "values", File.separator, "strings.xml")),
                 new String[]{"string"}, new String[]{"app_name"}, uiCallback);
         HashMap<String, String> gradleAttrs = gradleExtractor.find();
-        if (gradleAttrs == null) {
-            resetColor();
-            return;
-        }
+        if (gradleAttrs == null) return;
         HashMap<String, String> stringsAttrs = stringsExtractor.find();
-        if (stringsAttrs == null) {
-            resetColor();
-            return;
-        }
+        if (stringsAttrs == null) return;
 
         USER_APPNAME = stringsAttrs.get("app_name");
         USER_PACKAGE = gradleAttrs.get("applicationId");
@@ -58,10 +52,7 @@ public class Main extends MainBase {
         uiCallback.onProjectDetected(USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
 
         // Download latest code
-        if (!downloadArchive(uiCallback)) {
-            resetColor();
-            return;
-        }
+        if (!downloadArchive(uiCallback)) return;
 
         // Copy manifest
         File source = new File(EXTRACTED_ZIP_ROOT, MANIFEST_FILE_PATH);
@@ -92,10 +83,7 @@ public class Main extends MainBase {
                 new String[]{"applicationId", "versionCode", "versionName"},
                 new String[]{String.format("\"%s\"", USER_PACKAGE), USER_VERSION_CODE, String.format("\"%s\"", USER_VERSION_NAME)},
                 uiCallback);
-        if (!gradleMigrator.process()) {
-            resetColor();
-            return;
-        }
+        if (!gradleMigrator.process()) return;
 
         // Copy licensing module
         LOG("[INFO]: Migrating the licensing module...");
@@ -205,16 +193,10 @@ public class Main extends MainBase {
         XmlMigrator migrator = new XmlMigrator(
                 new File(projectValues, "strings.xml"), new File(latestValues, "strings.xml"),
                 uiCallback);
-        if (!migrator.process()) {
-            resetColor();
-            return;
-        }
+        if (!migrator.process()) return;
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_about.xml"), new File(latestValues, "dev_about.xml"), uiCallback);
-        if (!migrator.process()) {
-            resetColor();
-            return;
-        }
+        if (!migrator.process()) return;
 
         File projectChangelog = new File(projectValues, "dev_changelog.xml");
         File latestChangelog = new File(latestValues, "dev_changelog.xml");
@@ -222,37 +204,21 @@ public class Main extends MainBase {
             FileUtil.copyFolder(latestChangelog, projectChangelog, null);
 
         migrator = new XmlMigrator(projectChangelog, latestChangelog, uiCallback);
-        if (!migrator.process()) {
-            resetColor();
-            return;
-        }
+        if (!migrator.process()) return;
 
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_customization.xml"), new File(latestValues, "dev_customization.xml"),
                 uiCallback);
-        if (!migrator.process()) {
-            resetColor();
-            return;
-        }
+        if (!migrator.process()) return;
         migrator = new XmlMigrator(
                 new File(projectValues, "dev_theming.xml"), new File(latestValues, "dev_theming.xml"),
                 uiCallback);
-        if (!migrator.process()) {
-            resetColor();
-            return;
-        }
+        if (!migrator.process()) return;
 
-        System.out.println();
-        getPrinter(Ansi.FColor.YELLOW, Ansi.BColor.BLACK).print(
-                String.format("Upgrade is complete for %s!", USER_APPNAME));
+        System.out.println(String.format("\nUpgrade is complete for %s!", USER_APPNAME));
         uiCallback.onStatusUpdate(String.format("Upgrade is complete for %s!", USER_APPNAME));
-        resetColor();
         EXTRACTED_ZIP_ROOT.delete();
         uiCallback.onUpdateSuccessful();
-    }
-
-    private static void resetColor() {
-        getPrinter(Ansi.FColor.WHITE, Ansi.BColor.BLACK).println(" ");
     }
 
     private static boolean isBlacklisted(File file) {

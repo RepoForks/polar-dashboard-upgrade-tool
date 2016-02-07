@@ -199,25 +199,6 @@
             <systemPath>${project.basedir}/src/main/lib/jfxrt.jar</systemPath>
             <scope>system</scope>
         </dependency>
-        <dependency>
-            <groupId>printer</groupId>
-            <artifactId>printer-ansi-unx</artifactId>
-            <version>1.25</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/JCDP-1.25-nix.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>printer</groupId>
-            <artifactId>printer-ansi-win</artifactId>
-            <version>1.25</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/JCDP-1.25-win.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-            <version>1.11</version>
-        </dependency>
     </dependencies>
 
 </project>

@@ -1,10 +1,6 @@
 package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
-import print.color.Ansi;
-import print.color.ColoredPrinter;
-import print.color.ColoredPrinterI;
-import print.color.ColoredPrinterWIN;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,15 +32,7 @@ class MainBase {
     public static void LOG(String msg, Object... args) {
         if (args != null)
             msg = String.format(msg, args);
-        Ansi.FColor color;
-        if (msg.startsWith("[ERROR]")) {
-            color = Ansi.FColor.RED;
-        } else if (msg.startsWith("[INFO]") || msg.startsWith("[DETECTED]") || msg.startsWith("[RENAMING]")) {
-            color = Ansi.FColor.CYAN;
-        } else {
-            color = Ansi.FColor.WHITE;
-        }
-        getPrinter(color, Ansi.BColor.BLACK).println(msg);
+        System.out.println(msg);
     }
 
     public static void PROGRESS(String label, long read, long total) {
@@ -146,18 +134,5 @@ class MainBase {
             Util.closeQuietely(os);
         }
         return true;
-    }
-
-    protected static ColoredPrinterI getPrinter(Ansi.FColor frontColor, Ansi.BColor backColor) {
-        String os = System.getProperty("os.name");
-        //System.out.println("DETECTED OS: " + os);
-        if (os.toLowerCase().startsWith("win")) {
-            return new ColoredPrinterWIN.Builder(1, false)
-                    .foreground(frontColor).background(backColor).build();
-        } else {
-            return new ColoredPrinter.Builder(1, false)
-                    .foreground(frontColor).background(backColor).build();
-        }
-
     }
 }
