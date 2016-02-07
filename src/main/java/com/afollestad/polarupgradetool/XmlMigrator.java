@@ -27,12 +27,12 @@ public class XmlMigrator {
         if (!mProject.exists()) {
             Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mProject.getAbsolutePath()));
             if (uiCallback != null)
-                uiCallback.onErrorOccured(Main.cleanupPath(mProject.getAbsolutePath()) + " doesn't exist.");
+                uiCallback.onErrorOccurred(Main.cleanupPath(mProject.getAbsolutePath()) + " doesn't exist.");
             return false;
         } else if (!mLatest.exists()) {
             Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mLatest.getAbsolutePath()));
             if (uiCallback != null)
-                uiCallback.onErrorOccured(Main.cleanupPath(mLatest.getAbsolutePath()) + " doesn't exist.");
+                uiCallback.onErrorOccurred(Main.cleanupPath(mLatest.getAbsolutePath()) + " doesn't exist.");
             return false;
         }
 
@@ -60,7 +60,7 @@ public class XmlMigrator {
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             if (uiCallback != null)
-                uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());
+                uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(reader);
@@ -86,7 +86,7 @@ public class XmlMigrator {
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             if (uiCallback != null)
-                uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());
+                uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(reader);
@@ -106,7 +106,7 @@ public class XmlMigrator {
             e.printStackTrace();
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             if (uiCallback != null)
-                uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());
+                uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(writer);

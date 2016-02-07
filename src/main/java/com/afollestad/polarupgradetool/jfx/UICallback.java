@@ -9,7 +9,7 @@ public interface UICallback {
 
     void onProjectDetected(String applicationName, String applicationPackage, String applicationVersionName, String applicationVersionCode);
 
-    void onErrorOccured(String errorMessage);
+    void onErrorOccurred(String errorMessage);
 
     void onArchiveDownloadFailed(String errorMessage);
 

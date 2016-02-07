@@ -150,7 +150,7 @@ public class Main extends MainBase {
 
                 if (!source.renameTo(dest)) {
                     LOG("[ERROR]: Unable to rename %s", cleanupPath(source.getAbsolutePath()));
-                    uiCallback.onErrorOccured("Unable to rename: " + cleanupPath(source.getAbsolutePath()));
+                    uiCallback.onErrorOccurred("Unable to rename: " + cleanupPath(source.getAbsolutePath()));
                 }
             } else {
                 source.delete();
@@ -173,7 +173,7 @@ public class Main extends MainBase {
                 uiCallback.onStatusUpdate("Renaming " + cleanupPath(source.getAbsolutePath()) + " -> " + cleanupPath(dest.getAbsolutePath()));
                 if (!source.renameTo(dest)) {
                     LOG("[ERROR]: Unable to rename %s", cleanupPath(source.getAbsolutePath()));
-                    uiCallback.onErrorOccured("Unable to rename " + cleanupPath(source.getAbsolutePath()));
+                    uiCallback.onErrorOccurred("Unable to rename " + cleanupPath(source.getAbsolutePath()));
                 }
             } else {
                 source.delete();

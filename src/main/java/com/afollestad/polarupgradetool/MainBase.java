@@ -139,7 +139,7 @@ class MainBase {
             EXTRACTED_ZIP_ROOT = new File(EXTRACTED_ZIP_ROOT, ARCHIVE_ROOT);
         } catch (Exception e) {
             LOG("[ERROR]: An error occurred during download or extraction: %s\n", e.getMessage());
-            uiCallback.onErrorOccured("An error occurred during download or extraction: " + e.getMessage());
+            uiCallback.onErrorOccurred("An error occurred during download or extraction: " + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(is);

@@ -3,8 +3,6 @@ package com.afollestad.polarupgradetool.jfx;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -71,12 +69,9 @@ public class WindowScene {
                 messageListView.setItems(logMessages);
                 messageListView.setEditable(false);
                 updateBtn.setVisible(false);
-                updateBtn.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        //Main.upgrade(selectedFolder.getAbsolutePath(), WindowSceneController.this);
-                        interfaceUpdateThread.start();
-                    }
+                updateBtn.setOnAction(event -> {
+                    //Main.upgrade(selectedFolder.getAbsolutePath(), WindowSceneController.this);
+                    interfaceUpdateThread.start();
                 });
 
             } catch (IOException io) {
@@ -109,26 +104,16 @@ public class WindowScene {
             if (Platform.isFxApplicationThread()) {
                 logMessages.add("Found Project : " + applicationName + " [" + applicationPackage + "] Version Name: " + applicationVersionName + " Version Code: " + applicationVersionCode);
             } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        logMessages.add("Found Project : " + applicationName + " [" + applicationPackage + "] Version Name: " + applicationVersionName + " Version Code: " + applicationVersionCode);
-                    }
-                });
+                Platform.runLater(() -> logMessages.add("Found Project : " + applicationName + " [" + applicationPackage + "] Version Name: " + applicationVersionName + " Version Code: " + applicationVersionCode));
             }
         }
 
         @Override
-        public void onErrorOccured(String errorMessage) {
+        public void onErrorOccurred(String errorMessage) {
             if (Platform.isFxApplicationThread()) {
                 showErrorDialog(errorMessage);
             } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        showErrorDialog(errorMessage);
-                    }
-                });
+                Platform.runLater(() -> showErrorDialog(errorMessage));
             }
         }
 
@@ -137,12 +122,7 @@ public class WindowScene {
             if (Platform.isFxApplicationThread()) {
                 showErrorDialog(errorMessage);
             } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        showErrorDialog(errorMessage);
-                    }
-                });
+                Platform.runLater(() -> showErrorDialog(errorMessage));
             }
         }
 
@@ -151,12 +131,7 @@ public class WindowScene {
             if (Platform.isFxApplicationThread()) {
                 logMessages.add(statusMessage);
             } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        logMessages.add(statusMessage);
-                    }
-                });
+                Platform.runLater(() -> logMessages.add(statusMessage));
             }
         }
 
@@ -165,12 +140,7 @@ public class WindowScene {
             if (Platform.isFxApplicationThread()) {
                 showUpdateSuccessDialog();
             } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        showUpdateSuccessDialog();
-                    }
-                });
+                Platform.runLater(WindowScene.this::showUpdateSuccessDialog);
             }
         }
     }
@@ -182,12 +152,9 @@ public class WindowScene {
         alert.setContentText(message);
         alert.getDialogPane().setPrefSize(550, 270);
         alert.setResizable(true);
-        alert.setOnHiding(new EventHandler<DialogEvent>() {
-            @Override
-            public void handle(DialogEvent event) {
-                Platform.exit();
-                System.exit(0);
-            }
+        alert.setOnHiding(event -> {
+            Platform.exit();
+            System.exit(0);
         });
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -202,12 +169,9 @@ public class WindowScene {
         alert.setHeaderText("Update successful!");
         alert.setContentText("Polar is up to date.\nYour config has been restored.");
         alert.getDialogPane().setPrefSize(550, 270);
-        alert.setOnHiding(new EventHandler<DialogEvent>() {
-            @Override
-            public void handle(DialogEvent event) {
-                Platform.exit();
-                System.exit(0);
-            }
+        alert.setOnHiding(event -> {
+            Platform.exit();
+            System.exit(0);
         });
         alert.setResizable(true);
         Optional<ButtonType> result = alert.showAndWait();
