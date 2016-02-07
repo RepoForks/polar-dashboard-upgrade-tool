@@ -102,9 +102,10 @@ public class WindowScene {
         @Override
         public void onProjectDetected(String applicationName, String applicationPackage, String applicationVersionName, String applicationVersionCode) {
             if (Platform.isFxApplicationThread()) {
-                logMessages.add("Found Project : " + applicationName + " [" + applicationPackage + "] Version Name: " + applicationVersionName + " Version Code: " + applicationVersionCode);
+                logMessages.add("Found Project: " + applicationName + " [" + applicationPackage + "], Version Name: " + applicationVersionName + ", Version Code: " + applicationVersionCode);
+                messageListView.scrollTo(logMessages.size() - 1);
             } else {
-                Platform.runLater(() -> logMessages.add("Found Project : " + applicationName + " [" + applicationPackage + "] Version Name: " + applicationVersionName + " Version Code: " + applicationVersionCode));
+                Platform.runLater(() -> logMessages.add("Found Project: " + applicationName + " [" + applicationPackage + "], Version Name: " + applicationVersionName + ", Version Code: " + applicationVersionCode));
             }
         }
 
@@ -130,6 +131,7 @@ public class WindowScene {
         public void onStatusUpdate(String statusMessage) {
             if (Platform.isFxApplicationThread()) {
                 logMessages.add(statusMessage);
+                messageListView.scrollTo(logMessages.size() - 1);
             } else {
                 Platform.runLater(() -> logMessages.add(statusMessage));
             }
@@ -180,5 +182,4 @@ public class WindowScene {
             System.exit(0);
         }
     }
-
 }

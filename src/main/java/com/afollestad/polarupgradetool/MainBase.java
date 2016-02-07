@@ -72,6 +72,7 @@ class MainBase {
                 final String contentLengthStr = conn.getHeaderField("Content-Length");
                 if (contentLengthStr == null || contentLengthStr.trim().isEmpty()) {
                     LOG("[ERROR]: No Content-Length header was returned by GitHub. Try running this app again.");
+                    uiCallback.onErrorOccurred("GitHub did not report a Content-Length, please try again.");
                     return false;
                 }
                 contentLength = Long.parseLong(contentLengthStr);
