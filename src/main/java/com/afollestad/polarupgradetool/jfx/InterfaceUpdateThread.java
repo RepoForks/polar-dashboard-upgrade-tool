@@ -21,5 +21,4 @@ public class InterfaceUpdateThread extends Thread implements Runnable {
     public void run() {
         Main.upgrade(location, uiCallback);
     }
-
 }

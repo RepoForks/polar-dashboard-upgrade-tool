@@ -58,7 +58,7 @@ public class Main extends MainBase {
         uiCallback.onProjectDetected(USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
 
         // Download latest code
-        if (!downloadArchive()) {
+        if (!downloadArchive(uiCallback)) {
             resetColor();
             return;
         }
@@ -146,7 +146,7 @@ public class Main extends MainBase {
             dest = new File(dest, "dev_changelog.xml");
             if (!dest.exists()) {
                 LOG("[RENAMING]: %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
-                uiCallback.onStatusUpdate("Renaming %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
+                uiCallback.onStatusUpdate(String.format("Renaming %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath())));
 
                 if (!source.renameTo(dest)) {
                     LOG("[ERROR]: Unable to rename %s", cleanupPath(source.getAbsolutePath()));
@@ -158,8 +158,8 @@ public class Main extends MainBase {
         } else {
             LOG("[INFO] changelog.xml file wasn't found (in %s), assuming dev_changelog.xml is used already.",
                     cleanupPath(source.getParent()));
-            uiCallback.onStatusUpdate("changelog.xml file wasn't found (in %s), assuming dev_changelog.xml is used already.",
-                    cleanupPath(source.getParent()));
+            uiCallback.onStatusUpdate(String.format("changelog.xml file wasn't found (in %s), assuming dev_changelog.xml is used already.",
+                    cleanupPath(source.getParent())));
         }
 
         // If dev_options is still used, rename it to dev_customization before migrating.
@@ -210,7 +210,7 @@ public class Main extends MainBase {
             return;
         }
         migrator = new XmlMigrator(
-                new File(projectValues, "dev_about.xml"), new File(latestValues, "dev_about.xml"));
+                new File(projectValues, "dev_about.xml"), new File(latestValues, "dev_about.xml"), uiCallback);
         if (!migrator.process()) {
             resetColor();
             return;

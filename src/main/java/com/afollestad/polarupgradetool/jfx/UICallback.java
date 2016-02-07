@@ -6,6 +6,7 @@ package com.afollestad.polarupgradetool.jfx;
  * Year : 2016
  */
 public interface UICallback {
+
     void onProjectDetected(String applicationName, String applicationPackage, String applicationVersionName, String applicationVersionCode);
 
     void onErrorOccured(String errorMessage);
