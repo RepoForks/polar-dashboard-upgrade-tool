@@ -131,10 +131,10 @@ class MainBase {
             LOG("[INFO]: Extracting %s to %s...", cleanupPath(destZip.getAbsolutePath()),
                     cleanupPath(EXTRACTED_ZIP_ROOT.getAbsolutePath()));
             uiCallback.onStatusUpdate(String.format("Extracting %s to %s...",
-                cleanupPath(destZip.getAbsolutePath()), cleanupPath(EXTRACTED_ZIP_ROOT.getAbsolutePath()));
+                    cleanupPath(destZip.getAbsolutePath()), cleanupPath(EXTRACTED_ZIP_ROOT.getAbsolutePath())));
             UnzipUtil.unzip(destZip.getAbsolutePath(), EXTRACTED_ZIP_ROOT.getAbsolutePath());
             LOG("[INFO]: Extraction complete!\n");
-	    uiCallback.onStatusUpdate("Extraction complete!");
+            uiCallback.onStatusUpdate("Extraction complete!");
             destZip.delete();
             EXTRACTED_ZIP_ROOT = new File(EXTRACTED_ZIP_ROOT, ARCHIVE_ROOT);
         } catch (Exception e) {

@@ -2,7 +2,6 @@ package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
-import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +26,7 @@ public class AttributeExtractor {
         mFile = file;
         mAttributeNames = attrNames;
         mMode = mode;
-	this.uiCallback = uiCallback;
+        this.uiCallback = uiCallback;
     }
 
     public static String getTagName(String line) {
@@ -77,7 +76,7 @@ public class AttributeExtractor {
     public HashMap<String, String> find() {
         if (!mFile.exists()) {
             Main.LOG("[ERROR]: File %s does not exist.", mFile.getAbsolutePath());
-	    if(uiCallback != null) uiCallback.onErrorOccured("File does not exist:\n" + mFile.getAbsolutePath());
+            if (uiCallback != null) uiCallback.onErrorOccured("File does not exist:\n" + mFile.getAbsolutePath());
             return null;
         }
 
@@ -132,7 +131,8 @@ public class AttributeExtractor {
             }
         } catch (Exception e) {
             Main.LOG("[ERROR] Failed to read %s: %s", mFile.getAbsolutePath(), e.getMessage());
-	    if(uiCallback != null) uiCallback.onErrorOccured("Failed to read " + mFile.getAbsolutePath() + ": " + e.getMessage());
+            if (uiCallback != null)
+                uiCallback.onErrorOccured("Failed to read " + mFile.getAbsolutePath() + ": " + e.getMessage());
             return null;
         } finally {
             Util.closeQuietely(reader);

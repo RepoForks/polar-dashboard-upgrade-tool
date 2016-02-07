@@ -2,7 +2,6 @@ package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,18 +18,20 @@ public class XmlMigrator {
     public XmlMigrator(File project, File latest, UICallback uiCallback) {
         mProject = project;
         mLatest = latest;
-	this.uiCallback = uiCallback;
+        this.uiCallback = uiCallback;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public boolean process() {
         if (!mProject.exists()) {
             Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mProject.getAbsolutePath()));
-            if(uiCallback != null) uiCallback.onErrorOccured(Main.cleanupPath(mProject.getAbsolutePath()) + " doesn't exist.");
+            if (uiCallback != null)
+                uiCallback.onErrorOccured(Main.cleanupPath(mProject.getAbsolutePath()) + " doesn't exist.");
             return false;
         } else if (!mLatest.exists()) {
             Main.LOG("[ERROR]: %s doesn't exist.", Main.cleanupPath(mLatest.getAbsolutePath()));
-            if(uiCallback != null) uiCallback.onErrorOccured(Main.cleanupPath(mLatest.getAbsolutePath()) + " doesn't exist.");
+            if (uiCallback != null)
+                uiCallback.onErrorOccured(Main.cleanupPath(mLatest.getAbsolutePath()) + " doesn't exist.");
             return false;
         }
 
@@ -57,8 +58,9 @@ public class XmlMigrator {
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
-            if(uiCallback != null) uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());            
-return false;
+            if (uiCallback != null)
+                uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());
+            return false;
         } finally {
             Util.closeQuietely(reader);
             Util.closeQuietely(is);
@@ -82,7 +84,8 @@ return false;
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
-            if(uiCallback != null) uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());  
+            if (uiCallback != null)
+                uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(reader);
@@ -101,7 +104,8 @@ return false;
         } catch (Exception e) {
             e.printStackTrace();
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
-            if(uiCallback != null) uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());
+            if (uiCallback != null)
+                uiCallback.onErrorOccured("Failed to perform XML file migration:\n" + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(writer);
@@ -109,7 +113,7 @@ return false;
         }
 
         Main.LOG("[INFO]: Migrated %s", Main.cleanupPath(mProject.getAbsolutePath()));
-        if(uiCallback != null) uiCallback.onStatusUpdate("Migrated " + Main.cleanupPath(mProject.getAbsolutePath()));
+        if (uiCallback != null) uiCallback.onStatusUpdate("Migrated " + Main.cleanupPath(mProject.getAbsolutePath()));
         return true;
     }
 }

@@ -1,7 +1,5 @@
 package com.afollestad.polarupgradetool;
 
-import java.io.*;
-
 /**
  * @author Aidan Follestad (afollestad)
  */

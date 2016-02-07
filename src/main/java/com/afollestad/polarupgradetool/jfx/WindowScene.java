@@ -2,7 +2,6 @@ package com.afollestad.polarupgradetool.jfx;
 
 import com.afollestad.polarupgradetool.jfx.InterfaceUpdateThread;
 import com.afollestad.polarupgradetool.jfx.UICallback;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +10,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
@@ -48,14 +46,20 @@ public class WindowScene {
         private Scene scene;
         private File selectedFolder;
         private InterfaceUpdateThread interfaceUpdateThread;
-        @FXML  private ObservableList<String> logMessages;
+        @FXML
+        private ObservableList<String> logMessages;
 
         //ui elements
-        @FXML private TextField projectLocationTextField;
-        @FXML private Button browseButton;
-        @FXML private ListView<String> messageListView;
-        @FXML private Button updateBtn;
-        @FXML private Hyperlink copyrightLabel;
+        @FXML
+        private TextField projectLocationTextField;
+        @FXML
+        private Button browseButton;
+        @FXML
+        private ListView<String> messageListView;
+        @FXML
+        private Button updateBtn;
+        @FXML
+        private Hyperlink copyrightLabel;
 
         WindowSceneController() {
             try {
@@ -101,7 +105,7 @@ public class WindowScene {
 
         @Override
         public void onProjectDetected(String applicationName, String applicationPackage, String applicationVersionName, String applicationVersionCode) {
-            if(Platform.isFxApplicationThread()) {
+            if (Platform.isFxApplicationThread()) {
                 logMessages.add("Found Project : " + applicationName + " [" + applicationPackage + "] Version Name: " + applicationVersionName + " Version Code: " + applicationVersionCode);
             } else {
                 Platform.runLater(new Runnable() {
@@ -115,7 +119,7 @@ public class WindowScene {
 
         @Override
         public void onErrorOccured(String errorMessage) {
-            if(Platform.isFxApplicationThread()) {
+            if (Platform.isFxApplicationThread()) {
                 showErrorDialog(errorMessage);
             } else {
                 Platform.runLater(new Runnable() {
@@ -129,7 +133,7 @@ public class WindowScene {
 
         @Override
         public void onArchiveDownloadFailed(String errorMessage) {
-            if(Platform.isFxApplicationThread()) {
+            if (Platform.isFxApplicationThread()) {
                 showErrorDialog(errorMessage);
             } else {
                 Platform.runLater(new Runnable() {
@@ -143,7 +147,7 @@ public class WindowScene {
 
         @Override
         public void onStatusUpdate(String statusMessage) {
-            if(Platform.isFxApplicationThread()) {
+            if (Platform.isFxApplicationThread()) {
                 logMessages.add(statusMessage);
             } else {
                 Platform.runLater(new Runnable() {
@@ -157,7 +161,7 @@ public class WindowScene {
 
         @Override
         public void onUpdateSuccessful() {
-            if(Platform.isFxApplicationThread()) {
+            if (Platform.isFxApplicationThread()) {
                 showUpdateSuccessDialog();
             } else {
                 Platform.runLater(new Runnable() {

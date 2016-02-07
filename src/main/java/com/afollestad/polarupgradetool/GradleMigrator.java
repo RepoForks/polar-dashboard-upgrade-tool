@@ -2,7 +2,6 @@ package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -22,13 +21,7 @@ public class GradleMigrator {
         Collections.addAll(mPropertyNames, propertyNames);
         mPropertyValues = new ArrayList<>(propertyValues.length);
         Collections.addAll(mPropertyValues, propertyValues);
-	this.uiCallback = uiCallback;
-    }
-
-    public AttributeExtractor(File file, String[] attrNames, int mode) {
-        mFile = file;
-        mAttributeNames = attrNames;
-        mMode = mode;
+        this.uiCallback = uiCallback;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -53,7 +46,7 @@ public class GradleMigrator {
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to migrate a Gradle file: %s", e.getMessage());
-            if(uiCallback != null) uiCallback.onErrorOccured("Failed to migrate Gradle file:\n" + e.getMessage());
+            if (uiCallback != null) uiCallback.onErrorOccured("Failed to migrate Gradle file:\n" + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(reader);
@@ -74,7 +67,7 @@ public class GradleMigrator {
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to migrate a Gradle file: %s", e.getMessage());
-            if(uiCallback != null) uiCallback.onErrorOccured("Failed to migrate Gradle file:\n" + e.getMessage());            
+            if (uiCallback != null) uiCallback.onErrorOccured("Failed to migrate Gradle file:\n" + e.getMessage());
             return false;
         } finally {
             Util.closeQuietely(writer);
@@ -82,7 +75,8 @@ public class GradleMigrator {
         }
 
         Main.LOG("[INFO]: Migrated Gradle file %s", Main.cleanupPath(mFile.getAbsolutePath()));
-        if(uiCallback != null) uiCallback.onStatusUpdate("Migrated Gradle file:\n" + Main.cleanupPath(mFile.getAbsoluteFile()));
+        if (uiCallback != null)
+            uiCallback.onStatusUpdate("Migrated Gradle file:\n" + Main.cleanupPath(mFile.getAbsoluteFile()));
         return true;
     }
 }

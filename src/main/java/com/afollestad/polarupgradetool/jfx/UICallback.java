@@ -7,8 +7,12 @@ package com.afollestad.polarupgradetool.jfx;
  */
 public interface UICallback {
     void onProjectDetected(String applicationName, String applicationPackage, String applicationVersionName, String applicationVersionCode);
+
     void onErrorOccured(String errorMessage);
+
     void onArchiveDownloadFailed(String errorMessage);
+
     void onStatusUpdate(String statusMessage);
+
     void onUpdateSuccessful();
 }
