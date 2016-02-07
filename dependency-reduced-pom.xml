@@ -188,13 +188,6 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/src/main/lib/JCDP-1.25-win.jar</systemPath>
     </dependency>
-    <dependency>
-      <groupId>printer</groupId>
-      <artifactId>printer-jansi</artifactId>
-      <version>1.4</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/lib/jansi-1.4.jar</systemPath>
-    </dependency>
   </dependencies>
   <properties>
     <java.compile.version>1.8</java.compile.version>

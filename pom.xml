@@ -214,11 +214,9 @@
             <systemPath>${project.basedir}/src/main/lib/JCDP-1.25-win.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>printer</groupId>
-            <artifactId>printer-jansi</artifactId>
-            <version>1.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/lib/jansi-1.4.jar</systemPath>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.11</version>
         </dependency>
     </dependencies>
 

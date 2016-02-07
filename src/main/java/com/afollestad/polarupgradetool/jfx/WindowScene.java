@@ -1,7 +1,5 @@
 package com.afollestad.polarupgradetool.jfx;
 
-import com.afollestad.polarupgradetool.jfx.InterfaceUpdateThread;
-import com.afollestad.polarupgradetool.jfx.UICallback;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -94,9 +92,11 @@ public class WindowScene {
         protected void openFolderChooserDialog() {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             selectedFolder = directoryChooser.showDialog(scene.getWindow());
-            projectLocationTextField.setText(selectedFolder.getAbsolutePath());
-            interfaceUpdateThread = new InterfaceUpdateThread(selectedFolder.getAbsolutePath(), this);
-            updateBtn.setVisible(true);
+            if (selectedFolder != null) {
+                projectLocationTextField.setText(selectedFolder.getAbsolutePath());
+                interfaceUpdateThread = new InterfaceUpdateThread(selectedFolder.getAbsolutePath(), this);
+                updateBtn.setVisible(true);
+            }
         }
 
         @FXML
