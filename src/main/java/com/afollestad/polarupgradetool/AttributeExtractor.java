@@ -66,9 +66,10 @@ public class AttributeExtractor {
 
     public static String setElementValue(String line, String value) {
         int start = line.indexOf('>') + 1;
-        if (start < 0) return null;
+        if (start < 0) return line;
         int end = line.lastIndexOf('<');
-        if (end < 0) return null;
+        if (end < 0) return line;
+        else if (start > end) return line;
         StringBuilder sb = new StringBuilder(line);
         sb.replace(start, end, value);
         return sb.toString();

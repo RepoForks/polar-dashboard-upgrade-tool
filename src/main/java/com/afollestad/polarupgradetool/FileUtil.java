@@ -60,7 +60,7 @@ public class FileUtil {
             return true;
         }
 
-        if (interceptor == null || interceptor.loggingEnabled()) {
+        if (source.isDirectory() && (interceptor == null || interceptor.loggingEnabled())) {
             if (mLastFolder == null || !mLastFolder.getAbsolutePath().equals(source.getAbsolutePath()))
                 Main.LOG("%s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(destination.getAbsolutePath()));
             mLastFolder = source;

@@ -96,6 +96,7 @@ public class XmlMigrator {
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             if (uiCallback != null)
                 uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
+            e.printStackTrace();
             return false;
         } finally {
             Util.closeQuietely(reader);
