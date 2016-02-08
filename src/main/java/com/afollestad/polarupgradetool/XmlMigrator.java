@@ -105,12 +105,13 @@ public class XmlMigrator {
             newFileContent = new StringBuilder(new String(fileRaw, "UTF-8"));
             XmlScanner scanner = new XmlScanner(newFileContent);
 
-            while (scanner.reachedEnd()) {
+            while (!scanner.reachedEnd()) {
                 final String tag = scanner.nextTag();
+                if (tag == null) continue;
                 final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
                 if (mSourceValues.containsKey(attributeName))
                     scanner.setElementValue(mSourceValues.get(attributeName));
-//                String updatedTag = scanner.currentTag();
+                String updatedTag = scanner.currentTag();
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to process %s for XML migration: %s",

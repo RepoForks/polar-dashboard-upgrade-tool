@@ -11,7 +11,13 @@ public interface UICallback {
 
     void onErrorOccurred(String errorMessage);
 
+    void onArchiveDownloadStarted(String sizeStr);
+
+    void onArchiveDownloadProgress(String progressStr);
+
     void onArchiveDownloadFailed(String errorMessage);
+
+    void onArchiveDownloadSuccess();
 
     void onStatusUpdate(String statusMessage);
 

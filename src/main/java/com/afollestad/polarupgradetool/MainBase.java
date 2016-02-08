@@ -35,7 +35,7 @@ class MainBase {
         System.out.println(msg);
     }
 
-    public static void PROGRESS(String label, long read, long total) {
+    public static String PROGRESS(String label, long read, long total) {
         final int percent = (int) Math.ceil(((double) read / (double) total) * 100d);
         StringBuilder sb = new StringBuilder(13);
         sb.append('\r');
@@ -56,6 +56,8 @@ class MainBase {
         sb.append('/');
         sb.append(Util.readableFileSizeMB(total));
         System.out.print(sb.toString());
+        return String.format("%s/%s (%s%%)", Util.readableFileSizeMB(read),
+                Util.readableFileSizeMB(total), Util.round(percent));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -92,18 +94,19 @@ class MainBase {
             int totalRead = 0;
 
             LOG("[INFO]: Downloading a ZIP of Polar's latest code (%s)...", FileUtil.readableFileSize(contentLength));
-            uiCallback.onStatusUpdate("Downloading a ZIP of Polar's latest code (" + FileUtil.readableFileSize(contentLength) + ")...");
+            uiCallback.onArchiveDownloadStarted(FileUtil.readableFileSize(contentLength));
 
             while ((read = is.read(buffer)) != -1) {
                 os.write(buffer, 0, read);
                 totalRead += read;
-                PROGRESS(null, totalRead, contentLength);
+                final String progressStr = PROGRESS(null, totalRead, contentLength);
+                uiCallback.onArchiveDownloadProgress(progressStr);
             }
 
             PROGRESS(null, contentLength, contentLength);
             System.out.println();
             LOG("[INFO]: Download complete!");
-            uiCallback.onStatusUpdate("Download complete!");
+            uiCallback.onArchiveDownloadSuccess();
             os.flush();
 
             Util.closeQuietely(is);

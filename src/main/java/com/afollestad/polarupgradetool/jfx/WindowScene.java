@@ -60,6 +60,8 @@ public class WindowScene {
         private Button updateBtn;
         @FXML
         private Hyperlink copyrightLabel;
+        @FXML
+        private Label downloadProgress;
 
         WindowSceneController() {
             try {
@@ -75,6 +77,7 @@ public class WindowScene {
                 updateBtn.setOnAction(event -> {
                     //Main.upgrade(selectedFolder.getAbsolutePath(), WindowSceneController.this);
                     updateBtn.setVisible(false);
+                    downloadProgress.setVisible(false);
                     interfaceUpdateThread = new InterfaceUpdateThread(selectedFolder.getAbsolutePath(), this);
                     interfaceUpdateThread.start();
                 });
@@ -112,7 +115,7 @@ public class WindowScene {
                 logMessages.add("Found Project: " + applicationName + " [" + applicationPackage + "], Version Name: " + applicationVersionName + ", Version Code: " + applicationVersionCode);
                 messageListView.scrollTo(logMessages.size() - 1);
             } else {
-                Platform.runLater(() -> logMessages.add("Found Project: " + applicationName + " [" + applicationPackage + "], Version Name: " + applicationVersionName + ", Version Code: " + applicationVersionCode));
+                Platform.runLater(() -> onProjectDetected(applicationName, applicationPackage, applicationVersionName, applicationVersionCode));
             }
         }
 
@@ -126,11 +129,41 @@ public class WindowScene {
         }
 
         @Override
+        public void onArchiveDownloadStarted(String sizeStr) {
+            if (Platform.isFxApplicationThread()) {
+                downloadProgress.setVisible(true);
+                downloadProgress.setText("Downloading...");
+                onStatusUpdate(String.format("Downloading a ZIP of Polar's latest code (%s)...", sizeStr));
+            } else {
+                Platform.runLater(() -> onArchiveDownloadStarted(sizeStr));
+            }
+        }
+
+        @Override
+        public void onArchiveDownloadProgress(String progressStr) {
+            if (Platform.isFxApplicationThread()) {
+                downloadProgress.setText(progressStr);
+            } else {
+                Platform.runLater(() -> onArchiveDownloadProgress(progressStr));
+            }
+        }
+
+        @Override
+        public void onArchiveDownloadSuccess() {
+            if (Platform.isFxApplicationThread()) {
+                onStatusUpdate("Download complete!");
+            } else {
+                Platform.runLater(this::onArchiveDownloadSuccess);
+            }
+        }
+
+        @Override
         public void onArchiveDownloadFailed(String errorMessage) {
             if (Platform.isFxApplicationThread()) {
+                downloadProgress.setText("Download error");
                 showErrorDialog(errorMessage);
             } else {
-                Platform.runLater(() -> showErrorDialog(errorMessage));
+                Platform.runLater(() -> onArchiveDownloadFailed(errorMessage));
             }
         }
 
@@ -140,7 +173,7 @@ public class WindowScene {
                 logMessages.add(statusMessage);
                 messageListView.scrollTo(logMessages.size() - 1);
             } else {
-                Platform.runLater(() -> logMessages.add(statusMessage));
+                Platform.runLater(() -> onStatusUpdate(statusMessage));
             }
         }
 
