@@ -77,7 +77,7 @@ public class GradleMigrator {
 
         Main.LOG("[INFO]: Migrated Gradle file %s", Main.cleanupPath(mFile.getAbsolutePath()));
         if (uiCallback != null)
-            uiCallback.onStatusUpdate("Migrated Gradle file:\n" + Main.cleanupPath(mFile.getAbsolutePath()));
+            uiCallback.onStatusUpdate("Migrated Gradle file: " + Main.cleanupPath(mFile.getAbsolutePath()));
         return true;
     }
 }

@@ -25,6 +25,7 @@ public class WindowScene {
     private final Scene scene;
     private final WindowSceneController windowSceneController;
     private Button updateBtn;
+    private ObservableList<String> logMessages;
 
     public WindowScene() {
         windowSceneController = new WindowSceneController();
@@ -78,6 +79,7 @@ public class WindowScene {
                 });
 
                 WindowScene.this.updateBtn = updateBtn;
+                WindowScene.this.logMessages = logMessages;
                 copyrightLabel.setText(String.format("(c) %d Polar Upgrade Tool", Calendar.getInstance().get(Calendar.YEAR)));
             } catch (IOException io) {
                 io.printStackTrace();
@@ -162,6 +164,7 @@ public class WindowScene {
         alert.setOnHiding(event -> {
 //            Platform.exit();
 //            System.exit(0);
+            logMessages.clear();
             if (updateBtn != null)
                 updateBtn.setVisible(true);
         });
@@ -169,6 +172,7 @@ public class WindowScene {
         if (result.isPresent() && result.get() == ButtonType.OK) {
 //            Platform.exit();
 //            System.exit(0);
+            logMessages.clear();
             if (updateBtn != null)
                 updateBtn.setVisible(true);
         }
