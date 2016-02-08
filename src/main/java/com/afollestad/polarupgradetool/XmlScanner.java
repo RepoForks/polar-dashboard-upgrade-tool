@@ -74,6 +74,10 @@ public class XmlScanner {
                 // Skip elements with no attributes
                 mIndex = firstSpace + 1;
                 return nextTag();
+            } else if (!mXml.substring(mTagStart, next).contains("name=")) {
+                // Skip elements with no name attribute
+                mIndex = next + 1;
+                return nextTag();
             }
 
             mTagName = mXml.substring(mTagStart + 1, firstSpace);
