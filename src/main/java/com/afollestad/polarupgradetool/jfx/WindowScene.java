@@ -12,6 +12,7 @@ import javafx.stage.DirectoryChooser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Optional;
 
 /**
@@ -23,6 +24,7 @@ public class WindowScene {
 
     private final Scene scene;
     private final WindowSceneController windowSceneController;
+    private Button updateBtn;
 
     public WindowScene() {
         windowSceneController = new WindowSceneController();
@@ -74,6 +76,8 @@ public class WindowScene {
                     interfaceUpdateThread.start();
                 });
 
+                WindowScene.this.updateBtn = updateBtn;
+                copyrightLabel.setText(String.format("(c) %d Polar Upgrade Tool", Calendar.getInstance().get(Calendar.YEAR)));
             } catch (IOException io) {
                 io.printStackTrace();
             }
@@ -155,13 +159,17 @@ public class WindowScene {
         alert.getDialogPane().setPrefSize(550, 270);
         alert.setResizable(true);
         alert.setOnHiding(event -> {
-            Platform.exit();
-            System.exit(0);
+//            Platform.exit();
+//            System.exit(0);
+            if (updateBtn != null)
+                updateBtn.setVisible(true);
         });
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            Platform.exit();
-            System.exit(0);
+//            Platform.exit();
+//            System.exit(0);
+            if (updateBtn != null)
+                updateBtn.setVisible(true);
         }
     }
 
