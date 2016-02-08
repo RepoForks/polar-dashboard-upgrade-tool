@@ -50,6 +50,8 @@ public class FileUtil {
         }
     }
 
+    private static File mLastFolder;
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean copyFolder(File source, File destination, CopyInterceptor interceptor) {
         if (interceptor != null && interceptor.skip(source)) {
@@ -58,8 +60,11 @@ public class FileUtil {
             return true;
         }
 
-        if (interceptor == null || interceptor.loggingEnabled())
-            Main.LOG("%s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(destination.getAbsolutePath()));
+        if (interceptor == null || interceptor.loggingEnabled()) {
+            if (mLastFolder == null || !mLastFolder.getAbsolutePath().equals(source.getAbsolutePath()))
+                Main.LOG("%s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(destination.getAbsolutePath()));
+            mLastFolder = source;
+        }
         if (source.isDirectory()) {
             if (!destination.exists())
                 destination.mkdirs();
