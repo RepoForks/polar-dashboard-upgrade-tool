@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class XmlElementExtractor {
 
-    private static final String REGEX = "<%s name=\"%s\">[\\s\\S]*?<\\/%s>";
+    private static final String REGEX = "<%s name=\"%s\">[\\s\\S\\n]*<\\/%s>";
 
     private final File mFile;
     private final Pattern[] mPatterns;
