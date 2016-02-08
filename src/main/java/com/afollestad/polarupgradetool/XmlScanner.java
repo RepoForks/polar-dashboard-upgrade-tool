@@ -51,7 +51,7 @@ public class XmlScanner {
                 return null;
             } else if (mXml.charAt(mTagStart + 1) == '!') {
                 // Skip comments
-                mIndex = mTagStart + 1;
+                mIndex = mXml.indexOf("-->") + 3;
                 return nextTag();
             }
             final int next = mXml.indexOf(">", mTagStart);
