@@ -111,7 +111,6 @@ public class XmlMigrator {
                 final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
                 if (mSourceValues.containsKey(attributeName))
                     scanner.setElementValue(mSourceValues.get(attributeName));
-                String updatedTag = scanner.currentTag();
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to process %s for XML migration: %s",
@@ -126,6 +125,7 @@ public class XmlMigrator {
 
         // Write the latest (remote) file's changed contents to the project (local) file
         try {
+            mProject.delete();
             Files.write(Paths.get(mProject.getAbsolutePath()),
                     newFileContent.toString().getBytes("UTF-8"), StandardOpenOption.WRITE);
         } catch (Exception e) {
