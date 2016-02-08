@@ -46,6 +46,7 @@ public class XmlScanner {
         try {
             mTagStart = mXml.indexOf("<", mIndex);
             if (mTagStart < 0) {
+                // No more tags in the file
                 mReachedEnd = true;
                 return null;
             } else if (mXml.charAt(mTagStart + 1) == '!') {
