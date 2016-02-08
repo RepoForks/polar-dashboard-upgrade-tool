@@ -58,9 +58,10 @@ public class XmlMigrator {
             byte[] fileRaw = Files.readAllBytes(Paths.get(mProject.getAbsolutePath()));
             final StringBuilder fileContent = new StringBuilder(new String(fileRaw, "UTF-8"));
             final XmlScanner scanner = new XmlScanner(fileContent);
-            String tag;
 
-            while ((tag = scanner.nextTag()) != null) {
+            while (!scanner.reachedEnd()) {
+                final String tag = scanner.nextTag();
+                if (tag == null) continue;
                 final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
                 final String tagValue = scanner.tagValue();
                 if (tagValue != null)
@@ -86,8 +87,8 @@ public class XmlMigrator {
             newFileContent = new StringBuilder(new String(fileRaw, "UTF-8"));
             XmlScanner scanner = new XmlScanner(newFileContent);
 
-            String tag;
-            while ((tag = scanner.nextTag()) != null) {
+            while (scanner.reachedEnd()) {
+                final String tag = scanner.nextTag();
                 final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
                 if (mSourceValues.containsKey(attributeName))
                     scanner.setElementValue(mSourceValues.get(attributeName));
