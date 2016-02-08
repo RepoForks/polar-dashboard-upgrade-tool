@@ -57,7 +57,7 @@ public class XmlMigrator {
         try {
             byte[] fileRaw = Files.readAllBytes(Paths.get(mProject.getAbsolutePath()));
             final StringBuilder fileContent = new StringBuilder(new String(fileRaw, "UTF-8"));
-            final XmlScanner scanner = new XmlScanner(fileContent);
+            final XmlScanner scanner = new XmlScanner(fileContent, mProject);
 
             while (!scanner.reachedEnd()) {
                 final String tag = scanner.nextTag();
@@ -80,16 +80,14 @@ public class XmlMigrator {
 
         if (mProject.getName().equals("dev_customization.xml")) {
             // If project defaults are used in project file, set them to empty/null
-            if (!mSourceValues.containsKey("wallpapers_json_url") ||
-                    mSourceValues.get("wallpapers_json_url").equals("https://raw.githubusercontent.com/TWellington/JSON-for-Gaufrer/master/wallpapers.json")) {
+            if (!mSourceValues.containsKey("wallpapers_json_url")) {
                 mSourceValues.put("wallpapers_json_url", "");
             }
             if (!mSourceValues.containsKey("icon_request_email") ||
                     mSourceValues.get("icon_request_email").equals("fake-email@fake-website.com")) {
                 mSourceValues.put("icon_request_email", "");
             }
-            if (!mSourceValues.containsKey("donate_license_key") ||
-                    mSourceValues.get("donate_license_key").equals("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn/ntsCdMQTY94ZlGGrpurXwtrzYtdNrfzX6OFaWyVqnI8BX5sfPO6nDPPks/8tvA93/JTlCLHLK+D6l31b3HrGXp9Kn7pjPLQtaa1o9Sy6Jm7skEtdGykSDRwwZROAQWZiJJNtk3hAocdz2QLDQ8Qhw8NqWSVphLSmvvvEM1d4KC599tlwr0SZ4auZjHmI3pgB27ajt+7ixQ9AtSoDWEDBIybvIw0QqASVJDc9Yi9uUrrIEa/naZxPKbklyBUBtkVh8hJdimhHiwzPh8p/dWN89WbEj88XpcH5PLu1JvoY+A6t1pFrjBL4P0nJbU0Ls7g9CDr2UEKLTuS7tBPJtWcQIDAQAB")) {
+            if (!mSourceValues.containsKey("donate_license_key")) {
                 mSourceValues.put("donate_license_key", "");
             }
             if (!mSourceValues.containsKey("feedback_email") ||
@@ -103,7 +101,7 @@ public class XmlMigrator {
         try {
             byte[] fileRaw = Files.readAllBytes(Paths.get(mLatest.getAbsolutePath()));
             newFileContent = new StringBuilder(new String(fileRaw, "UTF-8"));
-            XmlScanner scanner = new XmlScanner(newFileContent);
+            XmlScanner scanner = new XmlScanner(newFileContent, mLatest);
 
             while (!scanner.reachedEnd()) {
                 final String tag = scanner.nextTag();

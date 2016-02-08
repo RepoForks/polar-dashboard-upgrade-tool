@@ -1,5 +1,7 @@
 package com.afollestad.polarupgradetool;
 
+import java.io.File;
+
 /**
  * @author Aidan Follestad (afollestad)
  */
@@ -14,9 +16,11 @@ public class XmlScanner {
     private int mValueStart;
     private int mValueEnd;
     private boolean mReachedEnd = false;
+    private final File mFile;
 
-    public XmlScanner(StringBuilder xml) {
+    public XmlScanner(StringBuilder xml, File file) {
         mXml = xml;
+        mFile = file;
     }
 
 //    public void updateXml(StringBuilder xml) {
@@ -41,6 +45,10 @@ public class XmlScanner {
 
     public String nextTag() {
         if (mReachedEnd) return null;
+
+        int next = -1;
+        int firstSpace = -1;
+
         try {
             mTagStart = mXml.indexOf("<", mIndex);
             if (mTagStart < 0) {
@@ -56,18 +64,18 @@ public class XmlScanner {
                 mIndex = mXml.indexOf("-->", mTagStart + 1) + 3;
                 return nextTag();
             }
-            final int next = mXml.indexOf(">", mTagStart);
-            final int firstSpace = mXml.indexOf(" ", mTagStart);
-            if (firstSpace > next) {
+
+            next = mXml.indexOf(">", mTagStart);
+            firstSpace = mXml.indexOf(" ", mTagStart);
+            if (firstSpace == -1) {
+                mReachedEnd = true;
+                return null;
+            } else if (firstSpace > next) {
                 // Skip elements with no attributes
                 mIndex = firstSpace + 1;
                 return nextTag();
             }
-            if (!mXml.substring(mTagStart, next).contains("name=")) {
-                // Skip elements with no name attribute
-                mIndex = next + 1;
-                return nextTag();
-            }
+
             mTagName = mXml.substring(mTagStart + 1, firstSpace);
             final String endFindStr = "</" + mTagName + ">";
             mTagEnd = mXml.indexOf(endFindStr, next + 1);
@@ -79,7 +87,8 @@ public class XmlScanner {
             mValueStart = next + 1;
             mValueEnd = mTagEnd;
             mTagValue = mXml.substring(mValueStart, mValueEnd);
-//            mTagEnd += endFindStr.length();
+            mTagEnd += endFindStr.length();
+
             final String tag = mXml.substring(mTagStart, mTagEnd);
             mIndex = mTagEnd;
             return tag;
