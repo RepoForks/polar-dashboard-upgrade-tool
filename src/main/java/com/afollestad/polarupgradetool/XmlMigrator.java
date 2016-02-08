@@ -127,7 +127,7 @@ public class XmlMigrator {
         try {
             mProject.delete();
             Files.write(Paths.get(mProject.getAbsolutePath()),
-                    newFileContent.toString().getBytes("UTF-8"), StandardOpenOption.WRITE);
+                    newFileContent.toString().getBytes("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         } catch (Exception e) {
             e.printStackTrace();
             Main.LOG("[ERROR]: Failed to write to %s: %s", Main.cleanupPath(mProject.getAbsolutePath()), e.getMessage());
