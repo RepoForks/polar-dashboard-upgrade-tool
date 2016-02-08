@@ -79,6 +79,16 @@ public class XmlMigrator {
         }
 
         // TODO if project defaults are used in latest, set them to empty/null
+        if (mSourceValues.get("wallpapers_json_url").equals("https://raw.githubusercontent.com/TWellington/JSON-for-Gaufrer/master/wallpapers.json"))
+            mSourceValues.put("wallpapers_json_url", "");
+        if (mSourceValues.get("icon_request_email").equals("fake-email@fake-website.com"))
+            mSourceValues.put("icon_request_email", "");
+        if (mSourceValues.get("donate_license_key").equals("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn/ntsCdMQTY94ZlGGrpurXwtrzYtdNrfzX6OFaWyVqnI8BX5sfPO6nDPPks/8tvA93/JTlCLHLK+D6l31b3HrGXp9Kn7pjPLQtaa1o9Sy6Jm7skEtdGykSDRwwZROAQWZiJJNtk3hAocdz2QLDQ8Qhw8NqWSVphLSmvvvEM1d4KC599tlwr0SZ4auZjHmI3pgB27ajt+7ixQ9AtSoDWEDBIybvIw0QqASVJDc9Yi9uUrrIEa/naZxPKbklyBUBtkVh8hJdimhHiwzPh8p/dWN89WbEj88XpcH5PLu1JvoY+A6t1pFrjBL4P0nJbU0Ls7g9CDr2UEKLTuS7tBPJtWcQIDAQAB"))
+            mSourceValues.put("donate_license_key", "");
+        if (mSourceValues.get("feedback_email").equals("fake-email@fake-website.com") ||
+                mSourceValues.get("feedback_email").isEmpty()) {
+            mSourceValues.put("feedback_email", mSourceValues.get("icon_request_email"));
+        }
 
         // Put original project configuration back where possible, leaving new configuration added
         StringBuilder newFileContent;

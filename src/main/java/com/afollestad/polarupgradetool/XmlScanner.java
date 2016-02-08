@@ -5,6 +5,7 @@ package com.afollestad.polarupgradetool;
  */
 public class XmlScanner {
 
+    private final int mInitialIndex;
     private int mIndex = 0;
     private StringBuilder mXml;
     private String mTagName;
@@ -16,7 +17,7 @@ public class XmlScanner {
     public XmlScanner(StringBuilder xml) {
         mXml = xml;
         // Skip over the root tag
-        mIndex = mXml.indexOf(">") + 1;
+        mInitialIndex = mIndex = mXml.indexOf(">") + 1;
     }
 
 //    public void updateXml(StringBuilder xml) {
@@ -73,6 +74,11 @@ public class XmlScanner {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    public void reset() {
+        mIndex = mInitialIndex;
+        mReachedEnd = false;
     }
 
     public void setElementValue(String value) {
