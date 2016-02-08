@@ -67,6 +67,12 @@ public class XmlMigrator {
             Util.closeQuietely(is);
         }
 
+        // Default values
+        mSourceValues.put("feedback_email", mSourceValues.get("icon_request_email"));
+        mSourceValues.put("donate_license_key", "");
+        mSourceValues.put("wallpapers_json_url", "");
+        mSourceValues.put("licensing_public_key", "");
+
         // Read the contents of the latest (destination) file to ArrayList
         final ArrayList<String> destLines = new ArrayList<>();
         try {
@@ -114,7 +120,8 @@ public class XmlMigrator {
         }
 
         Main.LOG("[INFO]: Migrated %s", Main.cleanupPath(mProject.getAbsolutePath()));
-        if (uiCallback != null) uiCallback.onStatusUpdate("Migrated XML resource file: " + Main.cleanupPath(mProject.getAbsolutePath()));
+        if (uiCallback != null)
+            uiCallback.onStatusUpdate("Migrated XML resource file: " + Main.cleanupPath(mProject.getAbsolutePath()));
         return true;
     }
 }
