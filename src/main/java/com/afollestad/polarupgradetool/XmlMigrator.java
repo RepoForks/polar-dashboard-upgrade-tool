@@ -79,11 +79,7 @@ public class XmlMigrator {
             return false;
         }
 
-        // Default values
-        mSourceValues.put("feedback_email", mSourceValues.get("icon_request_email"));
-        mSourceValues.put("donate_license_key", "");
-        mSourceValues.put("wallpapers_json_url", "");
-        mSourceValues.put("licensing_public_key", "");
+        // TODO if project defaults are used in latest, set them to empty/null
 
         // Put original project configuration back where possible, leaving new configuration added
         StringBuilder newFileContent;
