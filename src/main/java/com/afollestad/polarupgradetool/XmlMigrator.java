@@ -2,14 +2,31 @@ package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 public class XmlMigrator {
+
+    private static String getElementRegex(String... elementNames) {
+        StringBuilder matchingGroup = new StringBuilder("(");
+        for (int i = 0; i < elementNames.length; i++) {
+            elementNames[i] = elementNames[i].replace("-", "\\-");
+            if (i > 0) matchingGroup.append('|');
+            matchingGroup.append(elementNames[i]);
+        }
+        matchingGroup.append(')');
+        final String baseRegex = "<%s name=\"[\\S]*\">[\\s\\S\\n\\r]*<\\/%s>";
+        final String elementNamesStr = matchingGroup.toString();
+        return String.format(baseRegex, elementNamesStr, elementNamesStr);
+    }
 
     private final File mProject;
     private final File mLatest;
@@ -36,36 +53,34 @@ public class XmlMigrator {
             return false;
         }
 
-        InputStream is = null;
-        BufferedReader reader = null;
-        OutputStream os = null;
-        BufferedWriter writer = null;
-
-        // Read cache of values from the project (source) file, so they are maintained through migration
         final HashMap<String, String> mSourceValues = new HashMap<>();
+
+        // Read the project (local) file to pull out the user's current configuration
         try {
-            is = new FileInputStream(mProject);
-            reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String elementName = AttributeExtractor.getTagName(line);
-                if (elementName == null || elementName.equals("resources")) continue;
-                final String attributeName = AttributeExtractor.getAttributeValue("name", line);
-                if (attributeName != null) {
-                    final String elementValue = AttributeExtractor.getElementValue(line);
-                    if (elementValue != null)
-                        mSourceValues.put(attributeName, elementValue);
-                }
+            byte[] fileRaw = Files.readAllBytes(Paths.get(mProject.getAbsolutePath()));
+            final String fileContent = new String(fileRaw, "UTF-8");
+            final Pattern elementRegex = Pattern.compile(getElementRegex("bool", "string", "drawable", "integer", "string-array", "color"));
+            final Matcher matcher = elementRegex.matcher(fileContent);
+            int start = 0;
+            while (matcher.find(start)) {
+                final String tag = fileContent.substring(matcher.start(), matcher.end());
+                final String tagName = AttributeExtractor.getTagName(tag);
+                if (tagName == null) continue;
+                final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
+                final String elementValue = AttributeExtractor.getElementValue(tag);
+                if (elementValue != null)
+                    mSourceValues.put(attributeName, elementValue);
+                start = matcher.end() + 1;
             }
         } catch (Exception e) {
-            Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
-            if (uiCallback != null)
-                uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
+            Main.LOG("[ERROR]: Failed to process %s for XML migration: %s",
+                    Main.cleanupPath(mProject.getAbsolutePath()), e.getMessage());
+            if (uiCallback != null) {
+                uiCallback.onErrorOccurred(String.format("Failed to process %s for XML migration: %s",
+                        Main.cleanupPath(mProject.getAbsolutePath()), e.getMessage()));
+            }
             e.printStackTrace();
             return false;
-        } finally {
-            Util.closeQuietely(reader);
-            Util.closeQuietely(is);
         }
 
         // Default values
@@ -74,54 +89,51 @@ public class XmlMigrator {
         mSourceValues.put("wallpapers_json_url", "");
         mSourceValues.put("licensing_public_key", "");
 
-        // Read the contents of the latest (destination) file to ArrayList
-        final ArrayList<String> destLines = new ArrayList<>();
+        // Put original project configuration back where possible, leaving new configuration added
+        StringBuilder newFileContent;
         try {
-            is = new FileInputStream(mLatest);
-            reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    final String elementName = AttributeExtractor.getTagName(line);
-                    if (elementName != null && !elementName.equals("resources")) {
-                        final String attributeName = AttributeExtractor.getAttributeValue("name", line);
-                        final String sourceValue = mSourceValues.get(attributeName);
-                        if (sourceValue != null)
-                            line = AttributeExtractor.setElementValue(line, sourceValue);
+            byte[] fileRaw = Files.readAllBytes(Paths.get(mLatest.getAbsolutePath()));
+            newFileContent = new StringBuilder(new String(fileRaw, "UTF-8"));
+            final Pattern elementRegex = Pattern.compile(getElementRegex("bool", "string", "drawable", "integer", "string-array", "color"));
+            int start = 0;
+            while (start != -1) {
+                final Matcher matcher = elementRegex.matcher(newFileContent.toString());
+                if (matcher.find(start)) {
+                    final String tag = newFileContent.substring(matcher.start(), matcher.end());
+                    final String tagName = AttributeExtractor.getTagName(tag);
+                    if (tagName == null) continue;
+                    final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
+                    if (mSourceValues.containsKey(attributeName)) {
+                        final String tagReplacement = AttributeExtractor.setElementValue(tag, mSourceValues.get(attributeName));
+                        newFileContent.replace(matcher.start(), matcher.end(), tagReplacement);
                     }
+                    start = matcher.end() + 1;
+                } else {
+                    start = -1;
                 }
-                destLines.add(line);
             }
         } catch (Exception e) {
-            Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
-            if (uiCallback != null)
-                uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
+            Main.LOG("[ERROR]: Failed to process %s for XML migration: %s",
+                    Main.cleanupPath(mProject.getAbsolutePath()), e.getMessage());
+            if (uiCallback != null) {
+                uiCallback.onErrorOccurred(String.format("Failed to process %s for XML migration: %s",
+                        Main.cleanupPath(mProject.getAbsolutePath()), e.getMessage()));
+            }
             e.printStackTrace();
             return false;
-        } finally {
-            Util.closeQuietely(reader);
-            Util.closeQuietely(is);
         }
 
-        // Write processed lines back to the project (source) file
+        // Write the latest (remote) file's changed contents to the project (local) file
         try {
-            mProject.delete();
-            os = new FileOutputStream(mProject);
-            writer = new BufferedWriter(new OutputStreamWriter(os));
-            for (int i = 0; i < destLines.size(); i++) {
-                if (i > 0) writer.newLine();
-                writer.write(destLines.get(i));
-            }
+            Files.write(Paths.get(mProject.getAbsolutePath()),
+                    newFileContent.toString().getBytes("UTF-8"), StandardOpenOption.WRITE);
         } catch (Exception e) {
             e.printStackTrace();
-            Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
+            Main.LOG("[ERROR]: Failed to write to %s: %s", Main.cleanupPath(mProject.getAbsolutePath()), e.getMessage());
             if (uiCallback != null)
-                uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
+                uiCallback.onErrorOccurred(String.format("Failed to write to %s: %s", Main.cleanupPath(mProject.getAbsolutePath()), e.getMessage()));
             e.printStackTrace();
             return false;
-        } finally {
-            Util.closeQuietely(writer);
-            Util.closeQuietely(os);
         }
 
         Main.LOG("[INFO]: Migrated %s", Main.cleanupPath(mProject.getAbsolutePath()));

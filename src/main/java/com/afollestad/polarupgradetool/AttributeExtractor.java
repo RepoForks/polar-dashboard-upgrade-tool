@@ -30,20 +30,20 @@ public class AttributeExtractor {
         this.uiCallback = uiCallback;
     }
 
-    public static String getTagName(String line) {
-        int start = line.indexOf('<');
+    public static String getTagName(String tag) {
+        int start = tag.indexOf('<');
         if (start < 0) return null;
         start += 1;
-        int end = line.indexOf(' ', start);
+        int end = tag.indexOf(' ', start);
         if (end < 0) return null;
-        return line.substring(start, end);
+        return tag.substring(start, end);
     }
 
-    public static String getAttributeValue(String name, String line) {
+    public static String getAttributeValue(String name, String tag) {
         Pattern pattern = Pattern.compile(String.format(XML_REGEX, name));
-        Matcher matcher = pattern.matcher(line);
+        Matcher matcher = pattern.matcher(tag);
         if (matcher.find()) {
-            String result = line.substring(matcher.start(), matcher.end());
+            String result = tag.substring(matcher.start(), matcher.end());
             result = result.substring(result.indexOf('=') + 1, result.length());
             if (result.startsWith("\"") && result.endsWith("\""))
                 result = result.substring(1, result.length() - 1);
@@ -52,25 +52,25 @@ public class AttributeExtractor {
         return null;
     }
 
-    public static String getElementValue(String line) {
+    public static String getElementValue(String tag) {
         try {
-            int start = line.indexOf('>');
+            int start = tag.indexOf('>');
             if (start < 0) return null;
-            int end = line.lastIndexOf('<');
+            int end = tag.lastIndexOf("</");
             if (end < 0) return null;
-            return line.substring(start + 1, end);
+            return tag.substring(start + 1, end);
         } catch (Throwable t) {
             return null;
         }
     }
 
-    public static String setElementValue(String line, String value) {
-        int start = line.indexOf('>') + 1;
-        if (start < 0) return line;
-        int end = line.lastIndexOf('<');
-        if (end < 0) return line;
-        else if (start > end) return line;
-        StringBuilder sb = new StringBuilder(line);
+    public static String setElementValue(String tag, String value) {
+        int start = tag.indexOf('>') + 1;
+        if (start < 0) return tag;
+        int end = tag.lastIndexOf("</");
+        if (end < 0) return tag;
+        else if (start > end) return tag;
+        StringBuilder sb = new StringBuilder(tag);
         sb.replace(start, end, value);
         return sb.toString();
     }
