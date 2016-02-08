@@ -48,19 +48,22 @@ public class XmlScanner {
                 return nextTag();
             }
             final int next = mXml.indexOf(">", start);
-            if (!mXml.substring(start, next).contains("name=")) {
-                mIndex = next + 1;
-                return nextTag();
-            }
             final int firstSpace = mXml.indexOf(" ", start);
             if (firstSpace > next) {
+                // Skip elements with no attributes
                 mIndex = firstSpace + 1;
+                return nextTag();
+            }
+            if (!mXml.substring(start, next).contains("name=")) {
+                // Skip elements with no name attribute
+                mIndex = next + 1;
                 return nextTag();
             }
             mTagName = mXml.substring(start + 1, firstSpace);
             final String endFindStr = "</" + mTagName + ">";
             int end = mXml.indexOf(endFindStr, next + 1);
             if (end < 0) {
+                // Didn't find an end to this tag, skip it
                 mIndex = end + 1;
                 return nextTag();
             }
