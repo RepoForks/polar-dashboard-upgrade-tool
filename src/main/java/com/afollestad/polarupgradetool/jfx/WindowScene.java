@@ -33,6 +33,8 @@ public class WindowScene {
         windowSceneController.setRootScene(scene);
     }
 
+
+
     public WindowSceneController getWindowSceneController() {
         return windowSceneController;
     }

@@ -52,6 +52,9 @@
               <classpathPrefix>lib/</classpathPrefix>
               <mainClass>com.afollestad.polarupgradetool.jfx.UpgradeTool</mainClass>
             </manifest>
+            <manifestEntries>
+              <PUT-Version>${put.version}</PUT-Version>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
@@ -127,6 +130,7 @@
     <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
     <maven-shade-plugin.version>2.4.1</maven-shade-plugin.version>
     <maven-dependencies-plugin.version>2.10</maven-dependencies-plugin.version>
+    <put.version>${version}</put.version>
   </properties>
 </project>
 

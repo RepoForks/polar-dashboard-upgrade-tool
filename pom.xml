@@ -16,6 +16,8 @@
         <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
         <!-- java compiler version -->
         <java.compile.version>1.8</java.compile.version>
+        <!-- automatically use current application version -->
+        <put.version>${version}</put.version>
     </properties>
 
     <repositories>
@@ -70,6 +72,9 @@
                             <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>com.afollestad.polarupgradetool.jfx.UpgradeTool</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <PUT-Version>${put.version}</PUT-Version>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
