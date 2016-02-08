@@ -110,6 +110,7 @@ public class XmlMigrator {
                 final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
                 if (mSourceValues.containsKey(attributeName))
                     scanner.setElementValue(mSourceValues.get(attributeName));
+//                String updatedTag = scanner.currentTag();
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to process %s for XML migration: %s",

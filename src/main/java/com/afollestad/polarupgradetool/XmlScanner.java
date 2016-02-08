@@ -10,6 +10,8 @@ public class XmlScanner {
     private StringBuilder mXml;
     private String mTagName;
     private String mTagValue;
+    private int mTagStart;
+    private int mTagEnd;
     private int mValueStart;
     private int mValueEnd;
     private boolean mReachedEnd = false;
@@ -36,43 +38,47 @@ public class XmlScanner {
         return mReachedEnd;
     }
 
+    public String currentTag() {
+        return mXml.substring(mTagStart, mTagEnd);
+    }
+
     public String nextTag() {
         try {
-            final int start = mXml.indexOf("<", mIndex);
-            if (start < 0) {
+            mTagStart = mXml.indexOf("<", mIndex);
+            if (mTagStart < 0) {
                 mReachedEnd = true;
                 return null;
-            } else if (mXml.charAt(start + 1) == '!') {
+            } else if (mXml.charAt(mTagStart + 1) == '!') {
                 // Skip comments
-                mIndex = start + 1;
+                mIndex = mTagStart + 1;
                 return nextTag();
             }
-            final int next = mXml.indexOf(">", start);
-            final int firstSpace = mXml.indexOf(" ", start);
+            final int next = mXml.indexOf(">", mTagStart);
+            final int firstSpace = mXml.indexOf(" ", mTagStart);
             if (firstSpace > next) {
                 // Skip elements with no attributes
                 mIndex = firstSpace + 1;
                 return nextTag();
             }
-            if (!mXml.substring(start, next).contains("name=")) {
+            if (!mXml.substring(mTagStart, next).contains("name=")) {
                 // Skip elements with no name attribute
                 mIndex = next + 1;
                 return nextTag();
             }
-            mTagName = mXml.substring(start + 1, firstSpace);
+            mTagName = mXml.substring(mTagStart + 1, firstSpace);
             final String endFindStr = "</" + mTagName + ">";
-            int end = mXml.indexOf(endFindStr, next + 1);
-            if (end < 0) {
+            mTagEnd = mXml.indexOf(endFindStr, next + 1);
+            if (mTagEnd < 0) {
                 // Didn't find an end to this tag, skip it
-                mIndex = end + 1;
+                mIndex = mTagEnd + 1;
                 return nextTag();
             }
             mValueStart = next + 1;
-            mValueEnd = end;
+            mValueEnd = mTagEnd;
             mTagValue = mXml.substring(mValueStart, mValueEnd);
-            end += endFindStr.length();
-            final String tag = mXml.substring(start, end);
-            mIndex = end;
+            mTagEnd += endFindStr.length();
+            final String tag = mXml.substring(mTagStart, mTagEnd);
+            mIndex = mTagEnd;
             return tag;
         } catch (Throwable t) {
             throw new RuntimeException(t);
@@ -85,7 +91,12 @@ public class XmlScanner {
     }
 
     public void setElementValue(String value) {
+        final String formerValue = mTagValue;
+        mTagValue = value;
+        final int difference = mTagValue.length() - formerValue.length();
         mXml.replace(mValueStart, mValueEnd, value);
+        mValueEnd += difference;
+        mTagEnd += difference;
     }
 
     @Override
