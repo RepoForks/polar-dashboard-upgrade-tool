@@ -75,6 +75,7 @@ public class WindowScene {
                 updateBtn.setOnAction(event -> {
                     //Main.upgrade(selectedFolder.getAbsolutePath(), WindowSceneController.this);
                     updateBtn.setVisible(false);
+                    interfaceUpdateThread = new InterfaceUpdateThread(selectedFolder.getAbsolutePath(), this);
                     interfaceUpdateThread.start();
                 });
 
@@ -96,7 +97,6 @@ public class WindowScene {
             selectedFolder = directoryChooser.showDialog(scene.getWindow());
             if (selectedFolder != null) {
                 projectLocationTextField.setText(selectedFolder.getAbsolutePath());
-                interfaceUpdateThread = new InterfaceUpdateThread(selectedFolder.getAbsolutePath(), this);
                 updateBtn.setVisible(true);
             }
         }
