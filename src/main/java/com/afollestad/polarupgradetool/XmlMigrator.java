@@ -61,12 +61,10 @@ public class XmlMigrator {
             String tag;
 
             while ((tag = scanner.nextTag()) != null) {
-                final String tagName = AttributeExtractor.getTagName(tag);
-                if (tagName == null) continue;
                 final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
-                final String elementValue = AttributeExtractor.getElementValue(tag);
-                if (elementValue != null)
-                    mSourceValues.put(attributeName, elementValue);
+                final String tagValue = scanner.tagValue();
+                if (tagValue != null)
+                    mSourceValues.put(attributeName, tagValue);
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to process %s for XML migration: %s",
