@@ -5,7 +5,6 @@ package com.afollestad.polarupgradetool;
  */
 public class XmlScanner {
 
-    private final int mInitialIndex;
     private int mIndex = 0;
     private StringBuilder mXml;
     private String mTagName;
@@ -18,8 +17,6 @@ public class XmlScanner {
 
     public XmlScanner(StringBuilder xml) {
         mXml = xml;
-        // Skip over the root tag
-        mInitialIndex = mIndex = mXml.indexOf(">") + 1;
     }
 
 //    public void updateXml(StringBuilder xml) {
@@ -43,15 +40,20 @@ public class XmlScanner {
     }
 
     public String nextTag() {
+        if (mReachedEnd) return null;
         try {
             mTagStart = mXml.indexOf("<", mIndex);
             if (mTagStart < 0) {
                 // No more tags in the file
                 mReachedEnd = true;
                 return null;
+            } else if (mXml.charAt(mTagStart + 1) == '?') {
+                // Skip header
+                mIndex = mXml.indexOf("?>", mTagStart + 1) + 2;
+                return nextTag();
             } else if (mXml.charAt(mTagStart + 1) == '!') {
                 // Skip comments
-                mIndex = mXml.indexOf("-->") + 3;
+                mIndex = mXml.indexOf("-->", mTagStart + 1) + 3;
                 return nextTag();
             }
             final int next = mXml.indexOf(">", mTagStart);
@@ -77,7 +79,7 @@ public class XmlScanner {
             mValueStart = next + 1;
             mValueEnd = mTagEnd;
             mTagValue = mXml.substring(mValueStart, mValueEnd);
-            mTagEnd += endFindStr.length();
+//            mTagEnd += endFindStr.length();
             final String tag = mXml.substring(mTagStart, mTagEnd);
             mIndex = mTagEnd;
             return tag;
@@ -86,18 +88,18 @@ public class XmlScanner {
         }
     }
 
-    public void reset() {
-        mIndex = mInitialIndex;
-        mReachedEnd = false;
-    }
+//    public void reset() {
+//        mIndex = 0;
+//        mReachedEnd = false;
+//    }
 
     public void setElementValue(String value) {
-        final String formerValue = mTagValue;
         mTagValue = value;
-        final int difference = mTagValue.length() - formerValue.length();
         mXml.replace(mValueStart, mValueEnd, value);
-        mValueEnd += difference;
-        mTagEnd += difference;
+        final String endFindStr = "</" + mTagName + ">";
+        mValueEnd = mXml.indexOf(endFindStr, mValueStart);
+        mTagEnd = mValueEnd + endFindStr.length();
+        System.out.print("\0");
     }
 
     @Override
