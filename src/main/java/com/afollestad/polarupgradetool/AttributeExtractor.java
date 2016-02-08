@@ -134,6 +134,7 @@ public class AttributeExtractor {
             Main.LOG("[ERROR] Failed to read %s: %s", mFile.getAbsolutePath(), e.getMessage());
             if (uiCallback != null)
                 uiCallback.onErrorOccurred("Failed to read " + mFile.getAbsolutePath() + ": " + e.getMessage());
+            e.printStackTrace();
             return null;
         } finally {
             Util.closeQuietely(reader);

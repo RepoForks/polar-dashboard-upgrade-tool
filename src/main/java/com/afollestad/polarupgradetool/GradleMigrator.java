@@ -48,6 +48,7 @@ public class GradleMigrator {
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to migrate a Gradle file: %s", e.getMessage());
             if (uiCallback != null) uiCallback.onErrorOccurred("Failed to migrate Gradle file:\n" + e.getMessage());
+            e.printStackTrace();
             return false;
         } finally {
             Util.closeQuietely(reader);
@@ -69,6 +70,7 @@ public class GradleMigrator {
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to migrate a Gradle file: %s", e.getMessage());
             if (uiCallback != null) uiCallback.onErrorOccurred("Failed to migrate Gradle file:\n" + e.getMessage());
+            e.printStackTrace();
             return false;
         } finally {
             Util.closeQuietely(writer);

@@ -61,6 +61,7 @@ public class XmlMigrator {
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             if (uiCallback != null)
                 uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
+            e.printStackTrace();
             return false;
         } finally {
             Util.closeQuietely(reader);
@@ -80,12 +81,14 @@ public class XmlMigrator {
             reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
-                final String elementName = AttributeExtractor.getTagName(line);
-                if (elementName != null && !elementName.equals("resources")) {
-                    final String attributeName = AttributeExtractor.getAttributeValue("name", line);
-                    final String sourceValue = mSourceValues.get(attributeName);
-                    if (sourceValue != null)
-                        line = AttributeExtractor.setElementValue(line, sourceValue);
+                if (!line.isEmpty()) {
+                    final String elementName = AttributeExtractor.getTagName(line);
+                    if (elementName != null && !elementName.equals("resources")) {
+                        final String attributeName = AttributeExtractor.getAttributeValue("name", line);
+                        final String sourceValue = mSourceValues.get(attributeName);
+                        if (sourceValue != null)
+                            line = AttributeExtractor.setElementValue(line, sourceValue);
+                    }
                 }
                 destLines.add(line);
             }
@@ -113,6 +116,7 @@ public class XmlMigrator {
             Main.LOG("[ERROR]: Failed to perform XML file migration: %s", e.getMessage());
             if (uiCallback != null)
                 uiCallback.onErrorOccurred("Failed to perform XML file migration:\n" + e.getMessage());
+            e.printStackTrace();
             return false;
         } finally {
             Util.closeQuietely(writer);
