@@ -45,10 +45,8 @@ public class XmlScanner {
 
     public String nextTag() {
         if (mReachedEnd) return null;
-
-        int next = -1;
-        int firstSpace = -1;
-
+        int next;
+        int firstSpace;
         try {
             mTagStart = mXml.indexOf("<", mIndex);
             if (mTagStart < 0) {
@@ -74,7 +72,7 @@ public class XmlScanner {
                 // Skip elements with no attributes
                 mIndex = firstSpace + 1;
                 return nextTag();
-            } else if (!mXml.substring(mTagStart, next).contains("name=")) {
+            } else if (!mXml.substring(mTagStart, next).contains(" name=")) {
                 // Skip elements with no name attribute
                 mIndex = next + 1;
                 return nextTag();
@@ -107,10 +105,10 @@ public class XmlScanner {
 //    }
 
     public void setElementValue(String value) {
+        final String endFindStr = "</" + mTagName + ">";
         mTagValue = value;
         mXml.replace(mValueStart, mValueEnd, value);
-        final String endFindStr = "</" + mTagName + ">";
-        mValueEnd = mXml.indexOf(endFindStr, mValueStart);
+        mValueEnd = mValueStart + mTagValue.length();
         mTagEnd = mValueEnd + endFindStr.length();
         System.out.print("\0");
     }
