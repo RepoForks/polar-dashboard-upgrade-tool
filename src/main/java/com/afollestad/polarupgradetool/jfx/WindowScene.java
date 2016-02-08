@@ -73,6 +73,7 @@ public class WindowScene {
                 updateBtn.setVisible(false);
                 updateBtn.setOnAction(event -> {
                     //Main.upgrade(selectedFolder.getAbsolutePath(), WindowSceneController.this);
+                    updateBtn.setVisible(false);
                     interfaceUpdateThread.start();
                 });
 
