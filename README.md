@@ -19,7 +19,7 @@ This will create a JAR in the `target` folder that you can execute.
 From the project root:
 
 ```Gradle
-build-and-deploy.sh
+./build-and-deploy.sh
 ```
 
 This will create a JAR in the `target` folder that you can execute.
