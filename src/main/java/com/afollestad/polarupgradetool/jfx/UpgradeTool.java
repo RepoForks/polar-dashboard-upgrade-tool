@@ -1,5 +1,6 @@
 package com.afollestad.polarupgradetool.jfx;
 
+import com.afollestad.polarupgradetool.utils.ManifestUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.event.ActionEvent;
@@ -36,6 +37,8 @@ public class UpgradeTool extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        ManifestUtils.getGithubApplicationVersion();
     }
 
     public static HostServices getHostService() {

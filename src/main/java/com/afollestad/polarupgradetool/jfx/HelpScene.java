@@ -6,10 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.pegdown.PegDownProcessor;
-
-import java.io.*;
-import java.net.URL;
 
 /**
  * Project : polarupgradetool

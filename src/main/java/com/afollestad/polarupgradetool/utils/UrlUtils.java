@@ -13,6 +13,7 @@ public class UrlUtils {
     private static final String URL_GITHUB_POLAR = "https://github.com/afollestad/polar-dashboard";
     private static final String URL_GITHUB_AFOLLESTAD = "https://github.com/afollestad";
     private static final String URL_GITHUB_PDDSTUDIO = "https://github.com/PDDStudio";
+    private static final String URL_GITHUB_WIKI = "https://github.com/PDDStudio/polar-dashboard-upgrade-tool/wiki";
 
     public static void openPolarUpgradeToolPage() {
         UpgradeTool.getHostService().showDocument(URL_GITHUB_PUT);
@@ -28,6 +29,10 @@ public class UrlUtils {
 
     public static void openPddstudioGithubPage() {
         UpgradeTool.getHostService().showDocument(URL_GITHUB_PDDSTUDIO);
+    }
+
+    public static void openWikiPage() {
+        UpgradeTool.getHostService().showDocument(URL_GITHUB_WIKI);
     }
 
 }
