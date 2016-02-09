@@ -149,6 +149,11 @@
             <systemPath>${project.basedir}/src/main/lib/jfxrt.jar</systemPath>
             <scope>system</scope>
         </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.10</version>
+        </dependency>
     </dependencies>
 
 </project>

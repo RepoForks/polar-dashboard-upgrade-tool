@@ -10,7 +10,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="105.0" prefWidth="600.0" spacing="5.0">
          <children>
-            <Label text="About Polar Update Tool" underline="true">
+            <Label text="About Polar Upgrade Tool" underline="true">
                <font>
                   <Font name="Roboto Regular" size="24.0" />
                </font>

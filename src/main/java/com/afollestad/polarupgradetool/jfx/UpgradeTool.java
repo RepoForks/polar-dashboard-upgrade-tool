@@ -24,11 +24,6 @@ public class UpgradeTool extends Application {
 
     private static HostServices hostServices;
 
-    //main menu bar and menu items
-    private MenuBar menuBar;
-    private Menu fileMenu;
-
-
     @Override
     public void start(Stage stage) throws Exception {
         hostServices = getHostServices();
@@ -39,38 +34,8 @@ public class UpgradeTool extends Application {
         WindowScene windowScene = new WindowScene();
         Scene scene = windowScene.getScene();
 
-        createMenuBar();
-        ((VBox) scene.getRoot()).getChildren().add(0,menuBar);
-
         stage.setScene(scene);
         stage.show();
-    }
-
-    private void createMenuBar() {
-        //create the menuBar
-        menuBar = new MenuBar();
-        //Create the menuItems
-        fileMenu = new Menu("Menu");
-        menuBar.getMenus().addAll(fileMenu);
-        MenuItem helpItem = new MenuItem("Help / Usage");
-        helpItem.setOnAction(event -> {
-        });
-
-        MenuItem checkUpdateItem = new MenuItem("Check for update");
-        checkUpdateItem.setOnAction(event -> {
-        });
-
-        MenuItem aboutItem = new MenuItem("About");
-        aboutItem.setOnAction(event -> {
-            Stage stage = new Stage();
-            stage.setTitle("About Polar Update Tool");
-            stage.setResizable(false);
-            AboutScene aboutScene = new AboutScene();
-            stage.setScene(aboutScene.getScene());
-            stage.show();
-        });
-
-        fileMenu.getItems().addAll(helpItem, checkUpdateItem, aboutItem);
     }
 
     public static HostServices getHostService() {
