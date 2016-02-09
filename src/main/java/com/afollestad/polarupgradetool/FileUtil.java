@@ -41,14 +41,14 @@ class FileUtil {
         return count;
     }
 
-    public static abstract class CopyInterceptor {
-        public abstract String onCopyLine(File file, String line);
+    public interface SkipInterceptor {
+        boolean skip(File file);
+    }
 
-        public abstract boolean skip(File file);
+    public interface CopyInterceptor extends SkipInterceptor {
+        String onCopyLine(File file, String line);
 
-        public boolean loggingEnabled() {
-            return true;
-        }
+        boolean loggingEnabled();
     }
 
     private static File mLastFolder;
@@ -92,6 +92,28 @@ class FileUtil {
         } finally {
             Util.closeQuietely(in);
             Util.closeQuietely(out);
+        }
+    }
+
+    // Checks for files in the project folder that no longer exist in the latest code
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void checkDiff(File project, File latest, SkipInterceptor interceptor) {
+        if (interceptor.skip(project))
+            return;
+        if (project.exists() && !latest.exists()) {
+            Main.LOG("[DELETE]: %s no longer exists in the latest code, deleting...", Main.cleanupPath(project.getAbsolutePath()));
+            if (project.isDirectory()) {
+                wipe(project);
+            } else {
+                project.delete();
+            }
+        } else if (project.isDirectory()) {
+            String files[] = project.list();
+            for (String file : files) {
+                File srcFile = new File(project, file);
+                File destFile = new File(latest, file);
+                checkDiff(srcFile, destFile, interceptor);
+            }
         }
     }
 

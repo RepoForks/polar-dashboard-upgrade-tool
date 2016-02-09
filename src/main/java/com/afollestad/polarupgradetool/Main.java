@@ -123,11 +123,13 @@ public class Main extends MainBase {
 
         System.out.println();
 
-        // Copy Java files
+        // Check for Java files that no longer exist in the latest code
         source = new File(EXTRACTED_ZIP_ROOT, JAVA_FOLDER_PATH);
         source = Util.skipPackage(source);
         dest = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
         dest = Util.skipPackage(dest);
+        FileUtil.checkDiff(dest, source, Main::isBlacklisted);
+        // Copy Java files
         FileUtil.copyFolder(source, dest, new FileUtil.CopyInterceptor() {
             @Override
             public String onCopyLine(File file, String line) {
@@ -137,6 +139,11 @@ public class Main extends MainBase {
             @Override
             public boolean skip(File file) {
                 return isBlacklisted(file);
+            }
+
+            @Override
+            public boolean loggingEnabled() {
+                return true;
             }
         });
 
@@ -186,9 +193,11 @@ public class Main extends MainBase {
             uiCallback.onStatusUpdate("dev_options.xml file wasn't found (in" + cleanupPath(source.getParent()) + "), assuming dev_customization.xml is used already.");
         }
 
-        // Copy resource files, minus blacklisted files
+        // Check for resource files that were deleted from the latest code
         source = new File(EXTRACTED_ZIP_ROOT, RES_FOLDER_PATH);
         dest = new File(CURRENT_DIR, RES_FOLDER_PATH);
+        FileUtil.checkDiff(dest, source, Main::isBlacklisted);
+        // Copy resource files, minus blacklisted files
         FileUtil.copyFolder(source, dest, new FileUtil.CopyInterceptor() {
             @Override
             public String onCopyLine(File file, String line) {
@@ -198,6 +207,11 @@ public class Main extends MainBase {
             @Override
             public boolean skip(File file) {
                 return isBlacklisted(file);
+            }
+
+            @Override
+            public boolean loggingEnabled() {
+                return true;
             }
         });
 
