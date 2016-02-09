@@ -29,7 +29,7 @@ public class Main extends MainBase {
         CURRENT_DIR = new File(projectPath);
         System.out.println("\n--------------------------------------\n" +
                 "| Welcome to the Polar upgrade tool! |\n" +
-                "--------------------------------------\n");
+                "--------------------------------------");
 
         // Use app/build.gradle and /res/values/strings.xml to load info about icon pack
         File gradleFile = new File(CURRENT_DIR, GRADLE_FILE_PATH);
@@ -96,10 +96,7 @@ public class Main extends MainBase {
         // Copy build.gradle
         source = new File(CURRENT_DIR, GRADLE_FILE_PATH);
         dest = new File(EXTRACTED_ZIP_ROOT, GRADLE_FILE_PATH);
-        GradleMigrator gradleMigrator = new GradleMigrator(source, dest,
-                new String[]{"applicationId", "versionCode", "versionName"},
-                new String[]{String.format("\"%s\"", USER_PACKAGE), USER_VERSION_CODE, String.format("\"%s\"", USER_VERSION_NAME)},
-                uiCallback);
+        GradleMigrator gradleMigrator = new GradleMigrator(source, dest, uiCallback);
         if (!gradleMigrator.process()) return;
 
         // Copy licensing module

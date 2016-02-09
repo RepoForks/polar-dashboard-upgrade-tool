@@ -4,7 +4,6 @@ import com.afollestad.polarupgradetool.jfx.UICallback;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -13,18 +12,18 @@ public class GradleMigrator {
 
     private final File mProject;
     private final File mLatest;
-    private final ArrayList<String> mPropertyNames;
-    private final ArrayList<String> mPropertyValues;
     private final UICallback uiCallback;
 
-    public GradleMigrator(File project, File latest, String[] propertyNames, String[] propertyValues, UICallback uiCallback) {
+    public GradleMigrator(File project, File latest, UICallback uiCallback) {
         mProject = project;
         mLatest = latest;
-        mPropertyNames = new ArrayList<>(propertyNames.length);
-        Collections.addAll(mPropertyNames, propertyNames);
-        mPropertyValues = new ArrayList<>(propertyValues.length);
-        Collections.addAll(mPropertyValues, propertyValues);
         this.uiCallback = uiCallback;
+    }
+
+    private String processLineProperty(String propertyName, String line, String propertyValue) {
+        int start = line.indexOf(propertyName + " ");
+        if (start == -1) return line;
+        return String.format("        %s %s", propertyName, propertyValue);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -39,12 +38,11 @@ public class GradleMigrator {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                for (int i = 0; i < mPropertyNames.size(); i++) {
-                    final String propertyName = mPropertyNames.get(i);
-                    int start = line.indexOf(propertyName + " ");
-                    if (start == -1) continue;
-                    line = String.format("        %s %s", propertyName, mPropertyValues.get(i));
-                }
+                line = line.replace("output.outputFile.parent, \"MyPolarPack-${variant.versionName}.apk\")",
+                        "output.outputFile.parent, \"" + Main.USER_APPNAME + "-${variant.versionName}.apk\")");
+                line = processLineProperty("applicationId", line, Main.USER_PACKAGE);
+                line = processLineProperty("versionName", line, Main.USER_VERSION_NAME);
+                line = processLineProperty("versionCode", line, Main.USER_VERSION_CODE);
                 lines.add(line);
             }
         } catch (Exception e) {
