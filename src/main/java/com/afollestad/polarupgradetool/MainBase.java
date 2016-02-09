@@ -60,10 +60,16 @@ class MainBase {
                 Util.readableFileSizeMB(total), Util.round(percent));
     }
 
+    public static int TRIES = 0;
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     protected static boolean downloadArchive(UICallback uiCallback) {
         InputStream is = null;
         FileOutputStream os = null;
+
+        LOG("[INFO]: Contacting GitHub...");
+        uiCallback.onStatusUpdate("Contacting GitHub...");
+
         try {
             URL url = new URL(ARCHIVE_URL);
             URLConnection conn = url.openConnection();
@@ -73,9 +79,14 @@ class MainBase {
             try {
                 final String contentLengthStr = conn.getHeaderField("Content-Length");
                 if (contentLengthStr == null || contentLengthStr.trim().isEmpty()) {
-                    LOG("[ERROR]: No Content-Length header was returned by GitHub. Try running this app again.");
-                    uiCallback.onErrorOccurred("GitHub did not report a Content-Length, please try again.");
-                    return false;
+                    if (TRIES > 0) {
+                        LOG("[ERROR]: No Content-Length header was returned by GitHub. Try running this app again.");
+                        uiCallback.onErrorOccurred("GitHub did not report a Content-Length, please try again.");
+                        return false;
+                    }
+                    TRIES++;
+                    Thread.sleep(2000);
+                    return downloadArchive(uiCallback);
                 }
                 contentLength = Long.parseLong(contentLengthStr);
             } catch (Throwable e) {
