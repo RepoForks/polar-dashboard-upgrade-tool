@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.afollestad</groupId>
@@ -16,14 +17,9 @@
         <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
         <!-- java compiler version -->
         <java.compile.version>1.8</java.compile.version>
+        <!-- automatically use current application version -->
+        <put.version>${version}</put.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
     <!-- build plugin configuration -->
 
@@ -70,6 +66,9 @@
                             <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>com.afollestad.polarupgradetool.jfx.UpgradeTool</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <PUT-Version>${put.version}</PUT-Version>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
@@ -143,6 +142,16 @@
             <version>2.2</version>
             <systemPath>${project.basedir}/src/main/lib/jfxrt.jar</systemPath>
             <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.3.9</version>
         </dependency>
     </dependencies>
 

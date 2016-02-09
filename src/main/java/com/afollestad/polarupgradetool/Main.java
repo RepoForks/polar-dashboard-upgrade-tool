@@ -262,4 +262,9 @@ public class Main extends MainBase {
                     file.getName().equals("fragment_homepage.xml");
         }
     }
+
+    public static String getResourcesDir() {
+        return VALUES_FOLDER_PATH;
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.afollestad.polarupgradetool.jfx;
 
 import com.afollestad.polarupgradetool.Main;
+import com.afollestad.polarupgradetool.utils.SecurityUtil;
+import com.afollestad.polarupgradetool.utils.UrlUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,8 +10,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
+import org.controlsfx.control.MaskerPane;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +43,8 @@ public class WindowScene {
         windowSceneController.setRootScene(scene);
     }
 
+
+
     public WindowSceneController getWindowSceneController() {
         return windowSceneController;
     }
@@ -42,11 +53,17 @@ public class WindowScene {
         return scene;
     }
 
-    private class WindowSceneController extends VBox implements UICallback {
+    private class WindowSceneController extends StackPane implements UICallback {
 
         private Scene scene;
         private File selectedFolder;
         private InterfaceUpdateThread interfaceUpdateThread;
+        private MaskerPane maskerPane;
+        //main menu bar and menu items
+        private MenuBar menuBar;
+        private Menu fileMenu;
+        private GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+
         @FXML
         private ObservableList<String> logMessages;
 
@@ -62,7 +79,9 @@ public class WindowScene {
         @FXML
         private Hyperlink copyrightLabel;
         @FXML
-        private Label downloadProgress;
+        private StackPane mainPane;
+        @FXML
+        private VBox boxPane;
 
         WindowSceneController() {
             try {
@@ -70,6 +89,14 @@ public class WindowScene {
                 fxmlLoader.setRoot(this);
                 fxmlLoader.setController(this);
                 fxmlLoader.load();
+
+                maskerPane = new MaskerPane();
+                maskerPane.setVisible(false);
+
+                mainPane.getChildren().addAll(maskerPane);
+
+                createMenuBar();
+
                 projectLocationTextField.setEditable(false);
                 logMessages = FXCollections.observableArrayList();
                 messageListView.setItems(logMessages);
@@ -77,8 +104,9 @@ public class WindowScene {
                 updateBtn.setVisible(false);
                 updateBtn.setOnAction(event -> {
                     //Main.upgrade(selectedFolder.getAbsolutePath(), WindowSceneController.this);
+                    maskerPane.setText("Updating " + (Main.USER_APPNAME == null ? "Project" : Main.USER_APPNAME));
+                    maskerPane.setVisible(true);
                     updateBtn.setVisible(false);
-                    downloadProgress.setVisible(false);
                     interfaceUpdateThread = new InterfaceUpdateThread(selectedFolder.getAbsolutePath(), this);
                     interfaceUpdateThread.start();
                 });
@@ -91,6 +119,36 @@ public class WindowScene {
             }
         }
 
+        private void createMenuBar() {
+            //create the menuBar
+            menuBar = new MenuBar();
+            //Create the menuItems
+            fileMenu = new Menu("Menu");
+            menuBar.getMenus().addAll(fileMenu);
+            MenuItem helpItem = new MenuItem("Help / Usage", fontAwesome.create(FontAwesome.Glyph.QUESTION).color(Color.color(0, 0, 0, 0.87)));
+            helpItem.setOnAction(event -> {
+                UrlUtils.openWikiPage();
+            });
+
+            MenuItem checkUpdateItem = new MenuItem("Check for Update", fontAwesome.create(FontAwesome.Glyph.DOWNLOAD).color(Color.color(0, 0, 0, 0.87)));
+            checkUpdateItem.setOnAction(event -> {
+                UpgradeTool.getInstance().updateCheck();
+            });
+
+            MenuItem aboutItem = new MenuItem("About", fontAwesome.create(FontAwesome.Glyph.INFO).color(Color.color(0, 0, 0, 0.87)));
+            aboutItem.setOnAction(event -> {
+                Stage stage = new Stage();
+                stage.setTitle("About Polar Upgrade Tool");
+                stage.setResizable(false);
+                AboutScene aboutScene = new AboutScene();
+                stage.setScene(aboutScene.getScene());
+                stage.show();
+            });
+
+            fileMenu.getItems().addAll(helpItem, checkUpdateItem, aboutItem);
+            boxPane.getChildren().add(0, menuBar);
+        }
+
         public void setRootScene(Scene scene) {
             this.scene = scene;
         }
@@ -101,7 +159,11 @@ public class WindowScene {
             selectedFolder = directoryChooser.showDialog(scene.getWindow());
             if (selectedFolder != null) {
                 projectLocationTextField.setText(selectedFolder.getAbsolutePath());
-                updateBtn.setVisible(true);
+                if(SecurityUtil.checkIsPolarBased(selectedFolder.getAbsolutePath())) {
+                    updateBtn.setVisible(true);
+                } else {
+                    showSecurityInfoDialog(selectedFolder.getAbsolutePath());
+                }
             }
         }
 
@@ -115,6 +177,7 @@ public class WindowScene {
             if (Platform.isFxApplicationThread()) {
                 logMessages.add("Found Project: " + applicationName + " [" + applicationPackage + "], Version Name: " + applicationVersionName + ", Version Code: " + applicationVersionCode);
                 messageListView.scrollTo(logMessages.size() - 1);
+                maskerPane.setText("Updating " + Main.USER_APPNAME);
             } else {
                 Platform.runLater(() -> onProjectDetected(applicationName, applicationPackage, applicationVersionName, applicationVersionCode));
             }
@@ -123,27 +186,31 @@ public class WindowScene {
         @Override
         public void onErrorOccurred(String errorMessage) {
             if (Platform.isFxApplicationThread()) {
+                maskerPane.setVisible(false);
                 showErrorDialog(errorMessage);
             } else {
-                Platform.runLater(() -> showErrorDialog(errorMessage));
+                Platform.runLater(() -> {
+                    maskerPane.setVisible(false);
+                    showErrorDialog(errorMessage);
+                });
             }
         }
 
         @Override
         public void onArchiveDownloadStarted(String sizeStr) {
             if (Platform.isFxApplicationThread()) {
-                downloadProgress.setVisible(true);
-                downloadProgress.setText("Downloading...");
                 onStatusUpdate(String.format("Downloading a ZIP of Polar's latest code (%s)...", sizeStr));
             } else {
-                Platform.runLater(() -> onArchiveDownloadStarted(sizeStr));
+                Platform.runLater(() -> {
+                    onArchiveDownloadStarted(sizeStr);
+                });
             }
         }
 
         @Override
         public void onArchiveDownloadProgress(String progressStr) {
             if (Platform.isFxApplicationThread()) {
-                downloadProgress.setText(progressStr);
+                maskerPane.setText("Downloading latest source\n" + progressStr);
             } else {
                 Platform.runLater(() -> onArchiveDownloadProgress(progressStr));
             }
@@ -153,16 +220,20 @@ public class WindowScene {
         public void onArchiveDownloadSuccess() {
             if (Platform.isFxApplicationThread()) {
                 onStatusUpdate("Download complete!");
+                maskerPane.setText("Migrating resources...");
             } else {
-                Platform.runLater(this::onArchiveDownloadSuccess);
+                Platform.runLater(() -> {
+                    onArchiveDownloadSuccess();
+                    maskerPane.setText("Migrating resources...");
+                });
             }
         }
 
         @Override
         public void onArchiveDownloadFailed(String errorMessage) {
             if (Platform.isFxApplicationThread()) {
-                downloadProgress.setText("Download error");
                 showErrorDialog(errorMessage);
+                maskerPane.setVisible(false);
             } else {
                 Platform.runLater(() -> onArchiveDownloadFailed(errorMessage));
             }
@@ -181,9 +252,13 @@ public class WindowScene {
         @Override
         public void onUpdateSuccessful() {
             if (Platform.isFxApplicationThread()) {
+                maskerPane.setVisible(false);
                 showUpdateSuccessDialog();
             } else {
-                Platform.runLater(WindowScene.this::showUpdateSuccessDialog);
+                Platform.runLater(() -> {
+                    maskerPane.setVisible(false);
+                    showUpdateSuccessDialog();
+                });
             }
         }
     }
@@ -232,4 +307,33 @@ public class WindowScene {
             System.exit(0);
         }
     }
+
+    public void showSecurityInfoDialog(String path) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Polar Upgrade Tool: Warning");
+        alert.setHeaderText("WARNING: Unable to find Polar based Project!");
+        alert.getDialogPane().setPrefSize(550, 360);
+        alert.setContentText("The project located at:\n\n" +
+                path + "\n\n" +
+                "doesn't seem to be a project based on Polar.\n" +
+                "Proceeding with the upgrade might destroy your project setup and build system.\n" +
+                "Please make sure to backup your current data before continuing,\n" +
+                "you proceed at your own risk!");
+        alert.setResizable(false);
+
+        ButtonType confirmBtn = new ButtonType("Got it, Continue anyway!", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelBtn = new ButtonType("Abort Process", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().removeAll(alert.getButtonTypes());
+        alert.getButtonTypes().addAll(confirmBtn, cancelBtn);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == confirmBtn) {
+            updateBtn.setVisible(true);
+        } else {
+            updateBtn.setVisible(false);
+        }
+
+    }
+
 }
