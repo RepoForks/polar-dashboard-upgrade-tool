@@ -1,6 +1,7 @@
 package com.afollestad.polarupgradetool.jfx;
 
 import com.afollestad.polarupgradetool.Main;
+import com.afollestad.polarupgradetool.utils.SecurityUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -155,7 +156,11 @@ public class WindowScene {
             selectedFolder = directoryChooser.showDialog(scene.getWindow());
             if (selectedFolder != null) {
                 projectLocationTextField.setText(selectedFolder.getAbsolutePath());
-                updateBtn.setVisible(true);
+                if(SecurityUtil.checkIsPolarBased(selectedFolder.getAbsolutePath())) {
+                    updateBtn.setVisible(true);
+                } else {
+                    showSecurityInfoDialog(selectedFolder.getAbsolutePath());
+                }
             }
         }
 
@@ -299,4 +304,33 @@ public class WindowScene {
             System.exit(0);
         }
     }
+
+    public void showSecurityInfoDialog(String path) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Polar Upgrade Tool: Warning");
+        alert.setHeaderText("WARNING: Unable to find Polar based Project!");
+        alert.getDialogPane().setPrefSize(550, 360);
+        alert.setContentText("The project located at:\n\n" +
+                path + "\n\n" +
+                "doesn't seem to be a project based on Polar.\n" +
+                "Proceeding with the upgrade might destroy your project setup and build system.\n" +
+                "Please make sure to backup your current data before continuing,\n" +
+                "you proceed at your own risk!");
+        alert.setResizable(false);
+
+        ButtonType confirmBtn = new ButtonType("Got it, Continue anyway!", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelBtn = new ButtonType("Abort Process", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().removeAll(alert.getButtonTypes());
+        alert.getButtonTypes().addAll(confirmBtn, cancelBtn);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == confirmBtn) {
+            updateBtn.setVisible(true);
+        } else {
+            updateBtn.setVisible(false);
+        }
+
+    }
+
 }
