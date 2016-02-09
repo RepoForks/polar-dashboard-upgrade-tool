@@ -40,8 +40,8 @@ public class GradleMigrator {
             while ((line = reader.readLine()) != null) {
                 line = line.replace("output.outputFile.parent, \"MyPolarPack-${variant.versionName}.apk\")",
                         "output.outputFile.parent, \"" + Main.USER_APPNAME + "-${variant.versionName}.apk\")");
-                line = processLineProperty("applicationId", line, Main.USER_PACKAGE);
-                line = processLineProperty("versionName", line, Main.USER_VERSION_NAME);
+                line = processLineProperty("applicationId", line, "\"" + Main.USER_PACKAGE + "\"");
+                line = processLineProperty("versionName", line, "\"" + Main.USER_VERSION_NAME + "\"");
                 line = processLineProperty("versionCode", line, Main.USER_VERSION_CODE);
                 lines.add(line);
             }
