@@ -67,8 +67,10 @@ class MainBase {
         InputStream is = null;
         FileOutputStream os = null;
 
-        LOG("[INFO]: Contacting GitHub...");
-        uiCallback.onStatusUpdate("Contacting GitHub...");
+        if (TRIES == 0) {
+            LOG("[INFO]: Contacting GitHub...");
+            uiCallback.onStatusUpdate("Contacting GitHub...");
+        }
 
         try {
             URL url = new URL(ARCHIVE_URL);

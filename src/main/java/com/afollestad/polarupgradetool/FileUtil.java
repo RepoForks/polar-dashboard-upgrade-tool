@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class FileUtil {
+class FileUtil {
 
     public static String readableFileSize(long size) {
         double value;

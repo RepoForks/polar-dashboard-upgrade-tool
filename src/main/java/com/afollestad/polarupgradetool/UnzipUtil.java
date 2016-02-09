@@ -7,7 +7,7 @@ import java.util.zip.ZipInputStream;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class UnzipUtil {
+class UnzipUtil {
 
     private static final int BUFFER_SIZE = 4096;
 

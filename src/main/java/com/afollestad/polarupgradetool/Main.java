@@ -51,6 +51,22 @@ public class Main extends MainBase {
                 USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
         uiCallback.onProjectDetected(USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
 
+        final File projectBackup = new File(CURRENT_DIR,
+                String.format("%s-BACKUP.zip", USER_APPNAME.replace(" ", "_")));
+        if (projectBackup.exists())
+            projectBackup.delete();
+        LOG("[INFO]: Backing up your existing project to %s...", Main.cleanupPath(projectBackup.getAbsolutePath()));
+        uiCallback.onStatusUpdate(String.format("Backing up your existing project to %s...", Main.cleanupPath(projectBackup.getAbsolutePath())));
+        try {
+            ZipUtil.writeZipFile(CURRENT_DIR, projectBackup);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG("[ERROR]: Failed to make a backup of your project: %s", e.getMessage());
+            uiCallback.onErrorOccurred("Failed to make a backup of your project! " + e.getMessage());
+            return;
+        }
+        uiCallback.onStatusUpdate("Project backed up successfully!");
+
         // Download latest code
         if (!downloadArchive(uiCallback)) return;
 
