@@ -111,7 +111,6 @@ public class XmlScanner {
         mValueEnd = mValueStart + mTagValue.length();
         mTagEnd = mValueEnd + endFindStr.length();
         mIndex = mTagEnd;
-        System.out.print("\0");
     }
 
     @Override
