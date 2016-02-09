@@ -1,8 +1,9 @@
 package com.afollestad.polarupgradetool.utils;
 
-import org.apache.maven.model.v3_0_0.Model;
-import org.apache.maven.model.v3_0_0.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,9 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
@@ -23,21 +21,23 @@ import java.util.jar.JarFile;
  */
 public class ManifestUtils {
 
-    private static final String GITHUB_POM_URL = "https://raw.githubusercontent.com/afollestad/polar-dashboard-upgrade-tool/master/pom.xml";
+    private static final String GITHUB_POM_URL = "https://raw.githubusercontent.com/afollestad/polar-dashboard-upgrade-tool/master1/pom.xml";
     private static final String MANIFEST_PUT_VERSION = "PUT-Version";
     private static final String VERSION_UNKNOWN = "???";
 
-    public static void getGithubApplicationVersion() {
+    public static Model getRemoteApplicationModel() {
         try {
             MavenXpp3Reader mavenXpp3Reader = new MavenXpp3Reader();
             URL mavenUrl = new URL(GITHUB_POM_URL);
-            Model pom = mavenXpp3Reader.read(new InputStreamReader(mavenUrl.openStream()));
-            System.out.println("Pom Name: " + pom.getName() + " Artifact ID: " + pom.getArtifactId());
-            System.out.println("Current Version: " + pom.getCurrentVersion() + " Group ID: " + pom.getGroupId());
+            InputStreamReader inputStreamReader = new InputStreamReader(mavenUrl.openStream());
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            Model pom = mavenXpp3Reader.read(bufferedReader);
+            bufferedReader.close();
+            return pom;
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            return null;
         }
-
     }
 
     public static String getApplicationVersion(Class<?> className) {

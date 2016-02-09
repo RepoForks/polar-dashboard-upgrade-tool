@@ -132,6 +132,7 @@ public class WindowScene {
 
             MenuItem checkUpdateItem = new MenuItem("Check for Update", fontAwesome.create(FontAwesome.Glyph.DOWNLOAD).color(Color.color(0, 0, 0, 0.87)));
             checkUpdateItem.setOnAction(event -> {
+                UpgradeTool.getInstance().updateCheck();
             });
 
             MenuItem aboutItem = new MenuItem("About", fontAwesome.create(FontAwesome.Glyph.INFO).color(Color.color(0, 0, 0, 0.87)));
