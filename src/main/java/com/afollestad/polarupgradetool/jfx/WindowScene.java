@@ -215,8 +215,11 @@ public class WindowScene {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Polar Upgrade Tool: Info");
         alert.setHeaderText("Update successful!");
-        alert.setContentText("Polar is up to date.\nYour config has been restored.");
-        alert.getDialogPane().setPrefSize(550, 270);
+        alert.setContentText("Polar is up to date! Your configuration has been restored.\n\n" +
+                "Find any issues? Please report them on GitHub. You can undo changes made by this tool either " +
+                "using the backup ZIP archive placed in your project directory, or by using the following Git " +
+                "commands:\n\ngit add -A\ngit stash save\ngit stash drop");
+        alert.getDialogPane().setPrefSize(550, 360);
         alert.setOnHiding(event -> {
             Platform.exit();
             System.exit(0);
