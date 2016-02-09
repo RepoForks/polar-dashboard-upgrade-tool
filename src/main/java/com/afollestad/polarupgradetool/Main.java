@@ -95,7 +95,8 @@ public class Main extends MainBase {
 
         // Copy build.gradle
         source = new File(CURRENT_DIR, GRADLE_FILE_PATH);
-        GradleMigrator gradleMigrator = new GradleMigrator(source,
+        dest = new File(EXTRACTED_ZIP_ROOT, GRADLE_FILE_PATH);
+        GradleMigrator gradleMigrator = new GradleMigrator(source, dest,
                 new String[]{"applicationId", "versionCode", "versionName"},
                 new String[]{String.format("\"%s\"", USER_PACKAGE), USER_VERSION_CODE, String.format("\"%s\"", USER_VERSION_NAME)},
                 uiCallback);

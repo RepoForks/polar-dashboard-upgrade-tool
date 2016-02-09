@@ -11,13 +11,15 @@ import java.util.Collections;
  */
 public class GradleMigrator {
 
-    private final File mFile;
+    private final File mProject;
+    private final File mLatest;
     private final ArrayList<String> mPropertyNames;
     private final ArrayList<String> mPropertyValues;
     private final UICallback uiCallback;
 
-    public GradleMigrator(File file, String[] propertyNames, String[] propertyValues, UICallback uiCallback) {
-        mFile = file;
+    public GradleMigrator(File project, File latest, String[] propertyNames, String[] propertyValues, UICallback uiCallback) {
+        mProject = project;
+        mLatest = latest;
         mPropertyNames = new ArrayList<>(propertyNames.length);
         Collections.addAll(mPropertyNames, propertyNames);
         mPropertyValues = new ArrayList<>(propertyValues.length);
@@ -32,7 +34,7 @@ public class GradleMigrator {
         BufferedReader reader = null;
 
         try {
-            is = new FileInputStream(mFile);
+            is = new FileInputStream(mLatest);
             reader = new BufferedReader(new InputStreamReader(is));
             String line;
 
@@ -55,12 +57,12 @@ public class GradleMigrator {
             Util.closeQuietely(is);
         }
 
-        mFile.delete();
+        mProject.delete();
         OutputStream os = null;
         BufferedWriter writer = null;
 
         try {
-            os = new FileOutputStream(mFile);
+            os = new FileOutputStream(mProject);
             writer = new BufferedWriter(new OutputStreamWriter(os));
 
             for (int i = 0; i < lines.size(); i++) {
@@ -77,9 +79,9 @@ public class GradleMigrator {
             Util.closeQuietely(os);
         }
 
-        Main.LOG("[INFO]: Migrated Gradle file %s", Main.cleanupPath(mFile.getAbsolutePath()));
+        Main.LOG("[INFO]: Migrated Gradle file %s", Main.cleanupPath(mProject.getAbsolutePath()));
         if (uiCallback != null)
-            uiCallback.onStatusUpdate("Migrated Gradle file: " + Main.cleanupPath(mFile.getAbsolutePath()));
+            uiCallback.onStatusUpdate("Migrated Gradle file: " + Main.cleanupPath(mProject.getAbsolutePath()));
         return true;
     }
 }
