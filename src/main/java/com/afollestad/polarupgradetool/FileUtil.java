@@ -1,11 +1,12 @@
 package com.afollestad.polarupgradetool;
 
 import java.io.*;
+import java.util.Locale;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class FileUtil {
+class FileUtil {
 
     public static String readableFileSize(long size) {
         double value;
@@ -40,17 +41,81 @@ public class FileUtil {
         return count;
     }
 
-    public static abstract class CopyInterceptor {
-        public abstract String onCopyLine(File file, String line);
+    public interface SkipInterceptor {
+        boolean skip(File file);
+    }
 
-        public abstract boolean skip(File file);
+    public interface CopyInterceptor extends SkipInterceptor {
+        String onCopyLine(File file, String line);
 
-        public boolean loggingEnabled() {
-            return true;
-        }
+        boolean loggingEnabled();
     }
 
     private static File mLastFolder;
+
+    private static void copyFileText(File src, File dst, CopyInterceptor interceptor) throws Exception {
+        InputStream in = null;
+        OutputStream out = null;
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+        try {
+            in = new FileInputStream(src);
+            reader = new BufferedReader(new InputStreamReader(in));
+            out = new FileOutputStream(dst);
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (interceptor != null)
+                    line = interceptor.onCopyLine(src, line);
+                writer.write(line);
+                writer.newLine();
+            }
+        } finally {
+            Util.closeQuietely(reader);
+            Util.closeQuietely(in);
+            Util.closeQuietely(writer);
+            Util.closeQuietely(out);
+        }
+    }
+
+    private static void copyFileBinary(File src, File dst) throws Exception {
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new FileInputStream(src);
+            out = new FileOutputStream(dst);
+            byte[] buffer = new byte[Main.BUFFER_SIZE];
+            int read;
+            while ((read = in.read(buffer)) != -1)
+                out.write(buffer, 0, read);
+        } finally {
+            Util.closeQuietely(in);
+            Util.closeQuietely(out);
+        }
+    }
+
+    // Checks for files in the project folder that no longer exist in the latest code
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void checkDiff(File project, File latest, SkipInterceptor interceptor) {
+        if (interceptor.skip(project))
+            return;
+        if (project.exists() && !latest.exists()) {
+            Main.LOG("[DELETE]: %s no longer exists in the latest code, deleting...", Main.cleanupPath(project.getAbsolutePath()));
+            if (project.isDirectory()) {
+                wipe(project);
+            } else {
+                project.delete();
+            }
+        } else if (project.isDirectory()) {
+            String files[] = project.list();
+            for (String file : files) {
+                File srcFile = new File(project, file);
+                File destFile = new File(latest, file);
+                checkDiff(srcFile, destFile, interceptor);
+            }
+        }
+    }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean copyFolder(File source, File destination, CopyInterceptor interceptor) {
@@ -77,31 +142,16 @@ public class FileUtil {
             }
             return true;
         } else {
-            InputStream in = null;
-            OutputStream out = null;
-            BufferedReader reader = null;
-            BufferedWriter writer = null;
             try {
-                in = new FileInputStream(source);
-                reader = new BufferedReader(new InputStreamReader(in));
-                out = new FileOutputStream(destination);
-                writer = new BufferedWriter(new OutputStreamWriter(out));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (interceptor != null)
-                        line = interceptor.onCopyLine(source, line);
-                    writer.write(line);
-                    writer.newLine();
+                final String name = source.getName().toLowerCase(Locale.getDefault());
+                if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png")) {
+                    copyFileBinary(source, destination);
+                } else {
+                    copyFileText(source, destination, interceptor);
                 }
             } catch (Exception e) {
                 Main.LOG("[ERROR]: An error occurred while copying files: %s", e.getMessage());
                 return false;
-            } finally {
-                Util.closeQuietely(reader);
-                Util.closeQuietely(in);
-                Util.closeQuietely(writer);
-                Util.closeQuietely(out);
             }
             return true;
         }

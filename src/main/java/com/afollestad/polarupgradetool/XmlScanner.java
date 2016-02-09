@@ -1,23 +1,26 @@
 package com.afollestad.polarupgradetool;
 
+import java.io.File;
+
 /**
  * @author Aidan Follestad (afollestad)
  */
 public class XmlScanner {
 
-    private final int mInitialIndex;
     private int mIndex = 0;
     private StringBuilder mXml;
     private String mTagName;
     private String mTagValue;
+    private int mTagStart;
+    private int mTagEnd;
     private int mValueStart;
     private int mValueEnd;
     private boolean mReachedEnd = false;
+    private final File mFile;
 
-    public XmlScanner(StringBuilder xml) {
+    public XmlScanner(StringBuilder xml, File file) {
         mXml = xml;
-        // Skip over the root tag
-        mInitialIndex = mIndex = mXml.indexOf(">") + 1;
+        mFile = file;
     }
 
 //    public void updateXml(StringBuilder xml) {
@@ -36,53 +39,78 @@ public class XmlScanner {
         return mReachedEnd;
     }
 
+    public String currentTag() {
+        return mXml.substring(mTagStart, mTagEnd);
+    }
+
     public String nextTag() {
+        if (mReachedEnd) return null;
+        int next;
+        int firstSpace;
         try {
-            final int start = mXml.indexOf("<", mIndex);
-            if (start < 0) {
+            mTagStart = mXml.indexOf("<", mIndex);
+            if (mTagStart < 0) {
+                // No more tags in the file
                 mReachedEnd = true;
                 return null;
-            } else if (mXml.charAt(start + 1) == '!') {
+            } else if (mXml.charAt(mTagStart + 1) == '?') {
+                // Skip header
+                mIndex = mXml.indexOf("?>", mTagStart + 1) + 2;
+                return nextTag();
+            } else if (mXml.charAt(mTagStart + 1) == '!') {
                 // Skip comments
-                mIndex = start + 1;
+                mIndex = mXml.indexOf("-->", mTagStart + 1) + 3;
                 return nextTag();
             }
-            final int next = mXml.indexOf(">", start);
-            if (!mXml.substring(start, next).contains("name=")) {
+
+            next = mXml.indexOf(">", mTagStart);
+            firstSpace = mXml.indexOf(" ", mTagStart);
+            if (firstSpace == -1) {
+                mReachedEnd = true;
+                return null;
+            } else if (firstSpace > next) {
+                // Skip elements with no attributes
+                mIndex = firstSpace + 1;
+                return nextTag();
+            } else if (!mXml.substring(mTagStart, next).contains(" name=")) {
+                // Skip elements with no name attribute
                 mIndex = next + 1;
                 return nextTag();
             }
-            final int firstSpace = mXml.indexOf(" ", start);
-            if (firstSpace > next) {
-                mIndex = firstSpace + 1;
-                return nextTag();
-            }
-            mTagName = mXml.substring(start + 1, firstSpace);
+
+            mTagName = mXml.substring(mTagStart + 1, firstSpace);
             final String endFindStr = "</" + mTagName + ">";
-            int end = mXml.indexOf(endFindStr, next + 1);
-            if (end < 0) {
-                mIndex = end + 1;
+            mTagEnd = mXml.indexOf(endFindStr, next + 1);
+            if (mTagEnd < 0) {
+                // Didn't find an end to this tag, skip it
+                mIndex = mTagEnd + 1;
                 return nextTag();
             }
             mValueStart = next + 1;
-            mValueEnd = end;
+            mValueEnd = mTagEnd;
             mTagValue = mXml.substring(mValueStart, mValueEnd);
-            end += endFindStr.length();
-            final String tag = mXml.substring(start, end);
-            mIndex = end;
+            mTagEnd += endFindStr.length();
+
+            final String tag = mXml.substring(mTagStart, mTagEnd);
+            mIndex = mTagEnd;
             return tag;
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
     }
 
-    public void reset() {
-        mIndex = mInitialIndex;
-        mReachedEnd = false;
-    }
+//    public void reset() {
+//        mIndex = 0;
+//        mReachedEnd = false;
+//    }
 
     public void setElementValue(String value) {
+        final String endFindStr = "</" + mTagName + ">";
+        mTagValue = value;
         mXml.replace(mValueStart, mValueEnd, value);
+        mValueEnd = mValueStart + mTagValue.length();
+        mTagEnd = mValueEnd + endFindStr.length();
+        mIndex = mTagEnd;
     }
 
     @Override
