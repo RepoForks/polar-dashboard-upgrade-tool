@@ -64,13 +64,7 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
     }
 
     @Override
-    public void onUpdateCheckStarted() {
-        if(Platform.isFxApplicationThread()) {
-            System.out.println("Update check started");
-        } else {
-            Platform.runLater(this::onUpdateCheckStarted);
-        }
-    }
+    public void onUpdateCheckStarted() {}
 
     @Override
     public void onUpdateCheckFailed(String errorMsg) {

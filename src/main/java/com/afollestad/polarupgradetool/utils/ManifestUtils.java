@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
  */
 public class ManifestUtils {
 
-    private static final String GITHUB_POM_URL = "https://raw.githubusercontent.com/afollestad/polar-dashboard-upgrade-tool/master1/pom.xml";
+    private static final String GITHUB_POM_URL = "https://raw.githubusercontent.com/afollestad/polar-dashboard-upgrade-tool/master/pom.xml";
     private static final String MANIFEST_PUT_VERSION = "PUT-Version";
     private static final String VERSION_UNKNOWN = "???";
 
