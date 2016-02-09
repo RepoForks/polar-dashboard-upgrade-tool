@@ -126,6 +126,11 @@ public class WindowScene {
             menuBar.getMenus().addAll(fileMenu);
             MenuItem helpItem = new MenuItem("Help / Usage", fontAwesome.create(FontAwesome.Glyph.QUESTION).color(Color.color(0, 0, 0, 0.87)));
             helpItem.setOnAction(event -> {
+                Stage stage = new Stage();
+                stage.setTitle("Polar Upgrade Tool - Help");
+                HelpScene helpScene = new HelpScene();
+                stage.setScene(helpScene.getScene());
+                stage.show();
             });
 
             MenuItem checkUpdateItem = new MenuItem("Check for Update", fontAwesome.create(FontAwesome.Glyph.DOWNLOAD).color(Color.color(0, 0, 0, 0.87)));
