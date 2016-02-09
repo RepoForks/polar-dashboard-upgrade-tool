@@ -1,6 +1,6 @@
 # Polar Upgrade Tool
 
-PUT allows you to automatically migrate your icon packs to the latest versions of Polar, without any manual copying. **This project does not migrate your project to Polar from other dashboard templates, it upgrades existing Polar-using icon packs.
+PUT allows you to automatically migrate your icon packs to the latest versions of Polar, without any manual copying. **This project does not migrate your project to Polar from other dashboard templates, it upgrades existing Polar-using icon packs.**
 
 # Building and Running
 
