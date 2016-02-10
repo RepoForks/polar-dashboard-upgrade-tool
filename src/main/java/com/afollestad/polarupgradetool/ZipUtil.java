@@ -18,8 +18,11 @@ class ZipUtil {
         File[] files = dir.listFiles();
         if (files == null) return fileList;
         for (File file : files) {
-            if ((file.getName().equals(".git") || file.getName().equals(".idea")) && file.isDirectory())
+            if ((file.getName().equals(".git") || file.getName().equals(".idea") ||
+                    file.getName().equals(".gradle") || file.getName().equals("build")) &&
+                    file.isDirectory()) {
                 continue;
+            }
             fileList.add(file);
             if (file.isDirectory())
                 fileList.addAll(getAllFiles(file));
