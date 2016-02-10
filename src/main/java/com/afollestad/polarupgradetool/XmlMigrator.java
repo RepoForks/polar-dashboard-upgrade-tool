@@ -138,7 +138,7 @@ public class XmlMigrator {
             return false;
         }
 
-        Main.LOG("[INFO]: Migrated %s", Main.cleanupPath(mProject.getAbsolutePath()));
+        Main.LOG("[MIGRATE]: %s", Main.cleanupPath(mProject.getAbsolutePath()));
         if (uiCallback != null)
             uiCallback.onStatusUpdate("Migrated XML resource file: " + Main.cleanupPath(mProject.getAbsolutePath()));
         return true;
