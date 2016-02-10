@@ -97,6 +97,8 @@ class FileUtil {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void checkDiff(File project, File latest, SkipInterceptor interceptor, boolean importMode) {
         if (importMode) {
+            if (project.isDirectory() && interceptor.skip(project))
+                return;
             if (!project.exists() && latest.exists()) {
                 Main.LOG("[ADD]: %s exists in the latest code but not in the project, importing to %s...",
                         Main.cleanupPath(latest.getAbsolutePath()), Main.cleanupPath(project.getAbsolutePath()));
