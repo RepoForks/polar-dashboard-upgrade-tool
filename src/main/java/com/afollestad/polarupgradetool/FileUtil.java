@@ -1,5 +1,7 @@
 package com.afollestad.polarupgradetool;
 
+import com.afollestad.polarupgradetool.jfx.UICallback;
+
 import java.io.*;
 import java.util.Locale;
 
@@ -25,6 +27,31 @@ class FileUtil {
             unit = "GB";
         }
         return String.format("%s%s", Util.round(value), unit);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void checkResRename(String oldName, String expectedName, UICallback uiCallback) {
+        final File valuesFolder = new File(Main.CURRENT_DIR, Main.getResourcesDir());
+        File source = new File(valuesFolder, oldName);
+        if (source.exists()) {
+            File dest = new File(valuesFolder, expectedName);
+            if (!dest.exists()) {
+                Main.LOG("[RENAME]: %s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(dest.getAbsolutePath()));
+                uiCallback.onStatusUpdate(String.format("Renaming %s -> %s",
+                        Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(dest.getAbsolutePath())));
+                if (!source.renameTo(dest)) {
+                    Main.LOG("[ERROR]: Unable to rename %s", Main.cleanupPath(source.getAbsolutePath()));
+                    uiCallback.onErrorOccurred("Unable to rename: " + Main.cleanupPath(source.getAbsolutePath()));
+                }
+            } else {
+                source.delete();
+            }
+        } else {
+            String msg = String.format("%s file wasn't found (in %s), assuming %s is used already.",
+                    oldName, Main.cleanupPath(source.getParent()), expectedName);
+            Main.LOG("[INFO] " + msg);
+            uiCallback.onStatusUpdate(msg);
+        }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -105,7 +132,7 @@ class FileUtil {
                 boolean result = copyFolder(latest, project, new CopyInterceptor() {
                     @Override
                     public String onCopyLine(File file, String line) {
-                        return line;
+                        return line.replace("com.afollestad.polar", Main.USER_PACKAGE);
                     }
 
                     @Override

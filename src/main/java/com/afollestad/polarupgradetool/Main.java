@@ -119,6 +119,10 @@ public class Main extends MainBase {
         uiCallback.onStatusUpdate("Migrating the app module...");
         System.out.println();
 
+        // Perform renames to files in /res/values
+        FileUtil.checkResRename("changelog.xml", "dev_changelog.xml", uiCallback);
+        FileUtil.checkResRename("dev_options.xml", "dev_customization.xml", uiCallback);
+
         // Check for Java files that no longer exist in the latest code
         source = new File(EXTRACTED_ZIP_ROOT, JAVA_FOLDER_PATH);
         source = Util.skipPackage(source);
@@ -138,52 +142,6 @@ public class Main extends MainBase {
         FileUtil.checkDiff(dest, source, Main::isBlacklisted, true);
         // Copy resource files, minus blacklisted files
         FileUtil.copyFolder(source, dest, new PackageCopyInterceptor());
-
-        // If changelog.xml is still used, rename it to dev_changelog.xml before migrating.
-        source = new File(CURRENT_DIR, VALUES_FOLDER_PATH);
-        source = new File(source, "changelog.xml");
-        if (source.exists()) {
-            dest = new File(CURRENT_DIR, VALUES_FOLDER_PATH);
-            dest = new File(dest, "dev_changelog.xml");
-            if (!dest.exists()) {
-                LOG("[RENAME]: %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
-                uiCallback.onStatusUpdate(String.format("Renaming %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath())));
-
-                if (!source.renameTo(dest)) {
-                    LOG("[ERROR]: Unable to rename %s", cleanupPath(source.getAbsolutePath()));
-                    uiCallback.onErrorOccurred("Unable to rename: " + cleanupPath(source.getAbsolutePath()));
-                }
-            } else {
-                source.delete();
-            }
-        } else {
-            LOG("[INFO] changelog.xml file wasn't found (in %s), assuming dev_changelog.xml is used already.",
-                    cleanupPath(source.getParent()));
-            uiCallback.onStatusUpdate(String.format("changelog.xml file wasn't found (in %s), assuming dev_changelog.xml is used already.",
-                    cleanupPath(source.getParent())));
-        }
-
-        // If dev_options is still used, rename it to dev_customization before migrating.
-        source = new File(CURRENT_DIR, VALUES_FOLDER_PATH);
-        source = new File(source, "dev_options.xml");
-        if (source.exists()) {
-            dest = new File(CURRENT_DIR, VALUES_FOLDER_PATH);
-            dest = new File(dest, "dev_customization.xml");
-            if (!dest.exists()) {
-                LOG("[RENAME]: %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
-                uiCallback.onStatusUpdate("Renaming " + cleanupPath(source.getAbsolutePath()) + " -> " + cleanupPath(dest.getAbsolutePath()));
-                if (!source.renameTo(dest)) {
-                    LOG("[ERROR]: Unable to rename %s", cleanupPath(source.getAbsolutePath()));
-                    uiCallback.onErrorOccurred("Unable to rename " + cleanupPath(source.getAbsolutePath()));
-                }
-            } else {
-                source.delete();
-            }
-        } else {
-            LOG("[INFO] dev_options.xml file wasn't found (in %s), assuming dev_customization.xml is used already.",
-                    cleanupPath(source.getParent()));
-            uiCallback.onStatusUpdate("dev_options.xml file wasn't found (in" + cleanupPath(source.getParent()) + "), assuming dev_customization.xml is used already.");
-        }
 
         // Migrate the files ignored during direct copy
         final File projectValues = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "values");
