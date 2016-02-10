@@ -98,11 +98,10 @@ class FileUtil {
     // Checks for files in the project folder that no longer exist in the latest code
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void checkDiff(File project, File latest, SkipInterceptor interceptor, boolean importMode) {
-        if (interceptor.skip(project))
-            return;
         if (importMode) {
             if (!project.exists() && latest.exists()) {
-                Main.LOG("[ADD]: %s exists in the latest code but in the project, importing...", Main.cleanupPath(latest.getAbsolutePath()));
+                Main.LOG("[ADD]: %s exists in the latest code but not in the project, importing to %s...",
+                        Main.cleanupPath(latest.getAbsolutePath()), Main.cleanupPath(project.getAbsolutePath()));
                 copyFolder(latest, project, new Main.PackageCopyInterceptor() {
                     @Override
                     public boolean loggingEnabled() {
@@ -119,6 +118,8 @@ class FileUtil {
                 }
             }
         } else {
+            if (interceptor.skip(project))
+                return;
             if (project.exists() && !latest.exists()) {
                 Main.LOG("[DELETE]: %s no longer exists in the latest code, deleting...", Main.cleanupPath(project.getAbsolutePath()));
                 if (project.isDirectory()) {
