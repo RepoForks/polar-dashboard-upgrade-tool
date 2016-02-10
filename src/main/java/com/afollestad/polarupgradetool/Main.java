@@ -186,32 +186,29 @@ public class Main extends MainBase {
         }
 
         // Migrate the files ignored during direct copy
-        File projectValues = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "values");
-        File latestValues = new File(new File(EXTRACTED_ZIP_ROOT, RES_FOLDER_PATH), "values");
+        final File projectValues = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "values");
+        final File latestValues = new File(new File(EXTRACTED_ZIP_ROOT, RES_FOLDER_PATH), "values");
+
+        // Migrate strings.xml
         XmlMigrator migrator = new XmlMigrator(
                 new File(projectValues, "strings.xml"), new File(latestValues, "strings.xml"),
                 uiCallback);
         if (!migrator.process()) return;
-        migrator = new XmlMigrator(
-                new File(projectValues, "dev_about.xml"), new File(latestValues, "dev_about.xml"), uiCallback);
-        if (!migrator.process()) return;
 
-        File projectChangelog = new File(projectValues, "dev_changelog.xml");
-        File latestChangelog = new File(latestValues, "dev_changelog.xml");
-        if (!projectChangelog.exists())
-            FileUtil.copyFolder(latestChangelog, projectChangelog, null);
-
-        migrator = new XmlMigrator(projectChangelog, latestChangelog, uiCallback);
-        if (!migrator.process()) return;
-
-        migrator = new XmlMigrator(
-                new File(projectValues, "dev_customization.xml"), new File(latestValues, "dev_customization.xml"),
-                uiCallback);
-        if (!migrator.process()) return;
-        migrator = new XmlMigrator(
-                new File(projectValues, "dev_theming.xml"), new File(latestValues, "dev_theming.xml"),
-                uiCallback);
-        if (!migrator.process()) return;
+        // Migrate dev_ prefixed XML files
+        String[] files = projectValues.list();
+        boolean shouldReturn = false;
+        for (String file : files) {
+            if (file.startsWith("dev_") && file.endsWith(".xml")) {
+                migrator = new XmlMigrator(
+                        new File(projectValues, file), new File(latestValues, file), uiCallback);
+                if (!migrator.process()) {
+                    shouldReturn = true;
+                    break;
+                }
+            }
+        }
+        if (shouldReturn) return;
 
         System.out.println(String.format("\nUpgrade is complete for %s!", USER_APPNAME));
         uiCallback.onStatusUpdate(String.format("Upgrade is complete for %s!", USER_APPNAME));

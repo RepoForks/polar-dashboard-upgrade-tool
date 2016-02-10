@@ -102,10 +102,20 @@ class FileUtil {
             if (!project.exists() && latest.exists()) {
                 Main.LOG("[ADD]: %s -> %s...",
                         Main.cleanupPath(latest.getAbsolutePath()), Main.cleanupPath(project.getAbsolutePath()));
-                boolean result = copyFolder(latest, project, new Main.PackageCopyInterceptor() {
+                boolean result = copyFolder(latest, project, new CopyInterceptor() {
+                    @Override
+                    public String onCopyLine(File file, String line) {
+                        return line;
+                    }
+
                     @Override
                     public boolean loggingEnabled() {
                         return true;
+                    }
+
+                    @Override
+                    public boolean skip(File file) {
+                        return false;
                     }
                 });
                 if (!result) return;
