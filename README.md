@@ -10,6 +10,7 @@ PUT was designed and developed by [Aidan Follestad](https://github.com/afollesta
 You can find the latest version of PUT's packaged binary in the [Release Page of this Repository](https://github.com/afollestad/polar-dashboard-upgrade-tool/releases).
 
 In case you need more information about how to use this Tool head over to the [Wiki Page](https://github.com/PDDStudio/polar-dashboard-upgrade-tool/wiki/Polar-Dashboard-Upgrade-Tool---Wiki).
+
 The Wiki should guide people which are not common with technical/development stuff through the whole process to get their Polar-using icon pack updated.
 
 # Building and Running
