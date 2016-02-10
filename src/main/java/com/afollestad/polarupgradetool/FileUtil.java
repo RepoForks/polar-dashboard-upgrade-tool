@@ -105,7 +105,7 @@ class FileUtil {
                 copyFolder(latest, project, new Main.PackageCopyInterceptor() {
                     @Override
                     public boolean loggingEnabled() {
-                        return false;
+                        return true;
                     }
                 });
             }
