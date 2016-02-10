@@ -77,7 +77,7 @@ public class Main extends MainBase {
         // Copy manifest
         File source = new File(EXTRACTED_ZIP_ROOT, MANIFEST_FILE_PATH);
         File dest = new File(CURRENT_DIR, MANIFEST_FILE_PATH);
-        LOG("[INFO]: Migrating AndroidManifest.xml...");
+        LOG("[MIGRATE]: AndroidManifest.xml...");
         uiCallback.onStatusUpdate("Migrating AndroidManifest.xml...");
 
         FileUtil.copyFolder(source, dest, new PackageCopyInterceptor() {
@@ -94,7 +94,7 @@ public class Main extends MainBase {
         if (!gradleMigrator.process()) return;
 
         // Copy licensing module
-        LOG("[INFO]: Migrating the licensing module...");
+        LOG("[MIGRATE]: licensing module...");
         uiCallback.onStatusUpdate("Migrating the licensing module...");
         source = new File(EXTRACTED_ZIP_ROOT, LICENSING_MODULE_ROOT);
         dest = new File(CURRENT_DIR, LICENSING_MODULE_ROOT);
@@ -115,7 +115,7 @@ public class Main extends MainBase {
             }
         });
 
-        LOG("[INFO]: Migrating the app module...");
+        LOG("[MIGRATE]: app module...");
         uiCallback.onStatusUpdate("Migrating the app module...");
         System.out.println();
 
@@ -146,7 +146,7 @@ public class Main extends MainBase {
             dest = new File(CURRENT_DIR, VALUES_FOLDER_PATH);
             dest = new File(dest, "dev_changelog.xml");
             if (!dest.exists()) {
-                LOG("[RENAMING]: %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
+                LOG("[RENAME]: %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
                 uiCallback.onStatusUpdate(String.format("Renaming %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath())));
 
                 if (!source.renameTo(dest)) {
@@ -170,7 +170,7 @@ public class Main extends MainBase {
             dest = new File(CURRENT_DIR, VALUES_FOLDER_PATH);
             dest = new File(dest, "dev_customization.xml");
             if (!dest.exists()) {
-                LOG("[RENAMING]: %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
+                LOG("[RENAME]: %s -> %s", cleanupPath(source.getAbsolutePath()), cleanupPath(dest.getAbsolutePath()));
                 uiCallback.onStatusUpdate("Renaming " + cleanupPath(source.getAbsolutePath()) + " -> " + cleanupPath(dest.getAbsolutePath()));
                 if (!source.renameTo(dest)) {
                     LOG("[ERROR]: Unable to rename %s", cleanupPath(source.getAbsolutePath()));

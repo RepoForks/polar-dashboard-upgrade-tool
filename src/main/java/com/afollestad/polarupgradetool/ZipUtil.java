@@ -56,7 +56,7 @@ class ZipUtil {
             // to the directory being zipped, so chop off the rest of the path
             final String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
                     file.getCanonicalPath().length());
-            Main.LOG("[INFO] Zipping %s", zipFilePath);
+            Main.LOG("[ZIP]: %s", zipFilePath);
             ZipEntry zipEntry = new ZipEntry(zipFilePath);
             zos.putNextEntry(zipEntry);
             byte[] bytes = new byte[Main.BUFFER_SIZE];
