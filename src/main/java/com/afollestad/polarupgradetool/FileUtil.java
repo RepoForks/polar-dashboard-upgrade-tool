@@ -1,5 +1,7 @@
 package com.afollestad.polarupgradetool;
 
+import com.afollestad.polarupgradetool.jfx.UICallback;
+
 import java.io.*;
 import java.util.Locale;
 
@@ -28,6 +30,31 @@ class FileUtil {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void checkResRename(String oldName, String expectedName, UICallback uiCallback) {
+        final File valuesFolder = new File(Main.CURRENT_DIR, Main.getResourcesDir());
+        File source = new File(valuesFolder, oldName);
+        if (source.exists()) {
+            File dest = new File(valuesFolder, expectedName);
+            if (!dest.exists()) {
+                Main.LOG("[RENAME]: %s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(dest.getAbsolutePath()));
+                uiCallback.onStatusUpdate(String.format("Renaming %s -> %s",
+                        Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(dest.getAbsolutePath())));
+                if (!source.renameTo(dest)) {
+                    Main.LOG("[ERROR]: Unable to rename %s", Main.cleanupPath(source.getAbsolutePath()));
+                    uiCallback.onErrorOccurred("Unable to rename: " + Main.cleanupPath(source.getAbsolutePath()));
+                }
+            } else {
+                source.delete();
+            }
+        } else {
+            String msg = String.format("%s file wasn't found (in %s), assuming %s is used already.",
+                    oldName, Main.cleanupPath(source.getParent()), expectedName);
+            Main.LOG("[INFO] " + msg);
+            uiCallback.onStatusUpdate(msg);
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static int wipe(File dir) {
         int count = 1;
         if (dir.isDirectory()) {
@@ -50,8 +77,6 @@ class FileUtil {
 
         boolean loggingEnabled();
     }
-
-    private static File mLastFolder;
 
     private static void copyFileText(File src, File dst, CopyInterceptor interceptor) throws Exception {
         InputStream in = null;
@@ -97,22 +122,56 @@ class FileUtil {
 
     // Checks for files in the project folder that no longer exist in the latest code
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void checkDiff(File project, File latest, SkipInterceptor interceptor) {
-        if (interceptor.skip(project))
-            return;
-        if (project.exists() && !latest.exists()) {
-            Main.LOG("[DELETE]: %s no longer exists in the latest code, deleting...", Main.cleanupPath(project.getAbsolutePath()));
-            if (project.isDirectory()) {
-                wipe(project);
-            } else {
-                project.delete();
+    public static void checkDiff(File project, File latest, SkipInterceptor interceptor, boolean importMode) {
+        if (importMode) {
+            if (project.isDirectory() && interceptor.skip(project))
+                return;
+            if (!project.exists() && latest.exists()) {
+                Main.LOG("[ADD]: %s -> %s...",
+                        Main.cleanupPath(latest.getAbsolutePath()), Main.cleanupPath(project.getAbsolutePath()));
+                boolean result = copyFolder(latest, project, new CopyInterceptor() {
+                    @Override
+                    public String onCopyLine(File file, String line) {
+                        return line.replace("com.afollestad.polar", Main.USER_PACKAGE);
+                    }
+
+                    @Override
+                    public boolean loggingEnabled() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean skip(File file) {
+                        return false;
+                    }
+                });
+                if (!result) return;
             }
-        } else if (project.isDirectory()) {
-            String files[] = project.list();
-            for (String file : files) {
-                File srcFile = new File(project, file);
-                File destFile = new File(latest, file);
-                checkDiff(srcFile, destFile, interceptor);
+            if (latest.isDirectory()) {
+                String files[] = latest.list();
+                for (String file : files) {
+                    File srcFile = new File(project, file);
+                    File destFile = new File(latest, file);
+                    checkDiff(srcFile, destFile, interceptor, true);
+                }
+            }
+        } else {
+            if (interceptor.skip(project))
+                return;
+            if (project.exists() && !latest.exists()) {
+                Main.LOG("[DELETE]: %s", Main.cleanupPath(project.getAbsolutePath()));
+                if (project.isDirectory()) {
+                    wipe(project);
+                } else {
+                    project.delete();
+                }
+            } else if (project.isDirectory()) {
+                String files[] = project.list();
+                for (String file : files) {
+                    File srcFile = new File(project, file);
+                    File destFile = new File(latest, file);
+                    checkDiff(srcFile, destFile, interceptor, false);
+                }
             }
         }
     }
@@ -121,15 +180,12 @@ class FileUtil {
     public static boolean copyFolder(File source, File destination, CopyInterceptor interceptor) {
         if (interceptor != null && interceptor.skip(source)) {
             if (interceptor.loggingEnabled())
-                Main.LOG("[INFO]: Ignored %s", Main.cleanupPath(source.getAbsolutePath()));
+                Main.LOG("[SKIP]: %s", Main.cleanupPath(source.getAbsolutePath()));
             return true;
         }
 
-        if (source.isDirectory() && (interceptor == null || interceptor.loggingEnabled())) {
-            if (mLastFolder == null || !mLastFolder.getAbsolutePath().equals(source.getAbsolutePath()))
-                Main.LOG("%s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(destination.getAbsolutePath()));
-            mLastFolder = source;
-        }
+        if (interceptor == null || interceptor.loggingEnabled())
+            Main.LOG("[COPY]: %s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(destination.getAbsolutePath()));
         if (source.isDirectory()) {
             if (!destination.exists())
                 destination.mkdirs();
@@ -150,7 +206,8 @@ class FileUtil {
                     copyFileText(source, destination, interceptor);
                 }
             } catch (Exception e) {
-                Main.LOG("[ERROR]: An error occurred while copying files: %s", e.getMessage());
+                Main.LOG("[ERROR]: An error occurred while copying %s: %s",
+                        Main.cleanupPath(source.getAbsolutePath()), e.getMessage());
                 return false;
             }
             return true;

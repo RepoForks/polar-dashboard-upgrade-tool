@@ -94,6 +94,9 @@ public class XmlMigrator {
                     mSourceValues.get("feedback_email").equals("fake-email@fake-website.com")) {
                 mSourceValues.put("feedback_email", mSourceValues.get("icon_request_email"));
             }
+            if (!mSourceValues.containsKey("homepage_landing_icon")) {
+                mSourceValues.put("homepage_landing_icon", "@mipmap/ic_launcher");
+            }
         }
 
         // Put original project configuration back where possible, leaving new configuration added
@@ -135,7 +138,7 @@ public class XmlMigrator {
             return false;
         }
 
-        Main.LOG("[INFO]: Migrated %s", Main.cleanupPath(mProject.getAbsolutePath()));
+        Main.LOG("[MIGRATE]: %s", Main.cleanupPath(mProject.getAbsolutePath()));
         if (uiCallback != null)
             uiCallback.onStatusUpdate("Migrated XML resource file: " + Main.cleanupPath(mProject.getAbsolutePath()));
         return true;

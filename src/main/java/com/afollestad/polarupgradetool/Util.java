@@ -41,20 +41,17 @@ public class Util {
         if (contents == null) return file;
         file = contents[0];
 
-        // file = com
         contents = file.listFiles();
         if (contents == null) return file;
         file = contents[0];
 
-        // file = company
         contents = file.listFiles();
         if (contents == null) return file;
         file = contents[0];
 
-        // file = iconpack
-        contents = file.listFiles();
-        if (contents == null) return file;
-        file = contents[0];
+//        contents = file.listFiles();
+//        if (contents == null) return file;
+//        file = contents[0];
 
         return file;
     }
