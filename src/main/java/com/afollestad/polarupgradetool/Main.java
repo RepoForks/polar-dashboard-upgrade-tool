@@ -221,7 +221,10 @@ public class Main extends MainBase {
         if (file.isDirectory()) {
             return file.getName().startsWith("mipmap") ||
                     file.getName().equals("drawable-nodpi") ||
-                    file.getName().equals("xml");
+                    file.getName().equals("xml") ||
+                    file.getName().equals(".gradle") ||
+                    file.getName().equals(".idea") ||
+                    file.getName().equals("build");
         } else {
             return file.getName().equals("list_item_about_dev.xml") ||
                     (file.getName().startsWith("dev_") && file.getName().endsWith(".xml")) ||
