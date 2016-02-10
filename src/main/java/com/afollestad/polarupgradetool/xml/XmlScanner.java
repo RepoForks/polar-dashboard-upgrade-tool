@@ -1,4 +1,4 @@
-package com.afollestad.polarupgradetool;
+package com.afollestad.polarupgradetool.xml;
 
 import java.io.File;
 

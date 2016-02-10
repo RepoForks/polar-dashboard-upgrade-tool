@@ -1,4 +1,4 @@
-package com.afollestad.polarupgradetool;
+package com.afollestad.polarupgradetool.utils;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
@@ -7,7 +7,7 @@ import java.util.zip.ZipInputStream;
 /**
  * @author Aidan Follestad (afollestad)
  */
-class UnzipUtil {
+public class UnzipUtil {
 
     private static final int BUFFER_SIZE = 4096;
 

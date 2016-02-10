@@ -1,5 +1,6 @@
-package com.afollestad.polarupgradetool;
+package com.afollestad.polarupgradetool.utils;
 
+import com.afollestad.polarupgradetool.Main;
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
 import java.io.*;
@@ -8,7 +9,7 @@ import java.util.Locale;
 /**
  * @author Aidan Follestad (afollestad)
  */
-class FileUtil {
+public class FileUtil {
 
     public static String readableFileSize(long size) {
         double value;

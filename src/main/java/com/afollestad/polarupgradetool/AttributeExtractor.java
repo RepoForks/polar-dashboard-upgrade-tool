@@ -1,6 +1,7 @@
 package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
+import com.afollestad.polarupgradetool.utils.Util;
 
 import java.io.*;
 import java.util.HashMap;

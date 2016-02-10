@@ -1,4 +1,4 @@
-package com.afollestad.polarupgradetool;
+package com.afollestad.polarupgradetool.utils;
 
 import java.io.Closeable;
 import java.io.File;
