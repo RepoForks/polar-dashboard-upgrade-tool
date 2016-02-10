@@ -1,6 +1,11 @@
 package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
+import com.afollestad.polarupgradetool.utils.FileUtil;
+import com.afollestad.polarupgradetool.utils.Util;
+import com.afollestad.polarupgradetool.utils.ZipUtil;
+import com.afollestad.polarupgradetool.xml.XmlElementExtractor;
+import com.afollestad.polarupgradetool.xml.XmlMigrator;
 
 import java.io.File;
 import java.util.HashMap;

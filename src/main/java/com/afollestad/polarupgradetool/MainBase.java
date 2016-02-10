@@ -1,6 +1,9 @@
 package com.afollestad.polarupgradetool;
 
 import com.afollestad.polarupgradetool.jfx.UICallback;
+import com.afollestad.polarupgradetool.utils.FileUtil;
+import com.afollestad.polarupgradetool.utils.UnzipUtil;
+import com.afollestad.polarupgradetool.utils.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,8 +19,8 @@ class MainBase {
     private final static String ARCHIVE_URL = "https://github.com/afollestad/polar-dashboard/archive/master.zip";
     public final static int BUFFER_SIZE = 2048;
 
-    protected static File EXTRACTED_ZIP_ROOT;
-    protected static File CURRENT_DIR;
+    public static File EXTRACTED_ZIP_ROOT;
+    public static File CURRENT_DIR;
     private final static String ARCHIVE_ROOT = File.separator + "polar-dashboard-master";
 
     public static String cleanupPath(String from) {

@@ -13,7 +13,7 @@ public class UrlUtils {
     private static final String URL_GITHUB_POLAR = "https://github.com/afollestad/polar-dashboard";
     private static final String URL_GITHUB_AFOLLESTAD = "https://github.com/afollestad";
     private static final String URL_GITHUB_PDDSTUDIO = "https://github.com/PDDStudio";
-    private static final String URL_GITHUB_WIKI = "https://github.com/PDDStudio/polar-dashboard-upgrade-tool/wiki";
+    private static final String URL_GITHUB_WIKI = "https://github.com/PDDStudio/polar-dashboard-upgrade-tool/wiki/Polar-Dashboard-Upgrade-Tool---Wiki";
     private static final String URL_GITHUB_RELEASES = "https://github.com/afollestad/polar-dashboard-upgrade-tool/releases";
 
     public static void openPolarUpgradeToolPage() {

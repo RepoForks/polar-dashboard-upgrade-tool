@@ -1,5 +1,7 @@
-package com.afollestad.polarupgradetool;
+package com.afollestad.polarupgradetool.xml;
 
+import com.afollestad.polarupgradetool.AttributeExtractor;
+import com.afollestad.polarupgradetool.Main;
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
 import java.io.File;

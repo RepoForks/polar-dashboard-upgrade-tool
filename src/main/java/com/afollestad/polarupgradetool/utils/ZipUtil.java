@@ -1,4 +1,7 @@
-package com.afollestad.polarupgradetool;
+package com.afollestad.polarupgradetool.utils;
+
+import com.afollestad.polarupgradetool.Main;
+import com.afollestad.polarupgradetool.utils.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +14,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ZipUtil {
+public class ZipUtil {
 
     private static ArrayList<File> getAllFiles(File dir) {
         ArrayList<File> fileList = new ArrayList<>();
