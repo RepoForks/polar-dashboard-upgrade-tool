@@ -115,6 +115,8 @@ public class Main extends MainBase {
             }
         });
 
+        LOG("[INFO]: Migrating the app module...");
+        uiCallback.onStatusUpdate("Migrating the app module...");
         System.out.println();
 
         // Check for Java files that no longer exist in the latest code

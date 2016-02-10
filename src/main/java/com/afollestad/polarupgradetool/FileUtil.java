@@ -100,7 +100,7 @@ class FileUtil {
             if (project.isDirectory() && interceptor.skip(project))
                 return;
             if (!project.exists() && latest.exists()) {
-                Main.LOG("[ADD]: %s exists in the latest code but not in the project, importing to %s...",
+                Main.LOG("[ADD]: %s -> %s...",
                         Main.cleanupPath(latest.getAbsolutePath()), Main.cleanupPath(project.getAbsolutePath()));
                 copyFolder(latest, project, new Main.PackageCopyInterceptor() {
                     @Override
@@ -121,7 +121,7 @@ class FileUtil {
             if (interceptor.skip(project))
                 return;
             if (project.exists() && !latest.exists()) {
-                Main.LOG("[DELETE]: %s no longer exists in the latest code, deleting...", Main.cleanupPath(project.getAbsolutePath()));
+                Main.LOG("[DELETE]: %s", Main.cleanupPath(project.getAbsolutePath()));
                 if (project.isDirectory()) {
                     wipe(project);
                 } else {
