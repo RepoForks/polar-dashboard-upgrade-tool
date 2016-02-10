@@ -51,8 +51,6 @@ class FileUtil {
         boolean loggingEnabled();
     }
 
-    private static File mLastFolder;
-
     private static void copyFileText(File src, File dst, CopyInterceptor interceptor) throws Exception {
         InputStream in = null;
         OutputStream out = null;
@@ -146,11 +144,8 @@ class FileUtil {
             return true;
         }
 
-        if (source.isDirectory() && (interceptor == null || interceptor.loggingEnabled())) {
-            if (mLastFolder == null || !mLastFolder.getAbsolutePath().equals(source.getAbsolutePath()))
-                Main.LOG("%s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(destination.getAbsolutePath()));
-            mLastFolder = source;
-        }
+        if (interceptor == null || interceptor.loggingEnabled())
+            Main.LOG("[COPY]: %s -> %s", Main.cleanupPath(source.getAbsolutePath()), Main.cleanupPath(destination.getAbsolutePath()));
         if (source.isDirectory()) {
             if (!destination.exists())
                 destination.mkdirs();
