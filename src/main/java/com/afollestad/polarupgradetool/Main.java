@@ -51,13 +51,13 @@ public class Main extends MainBase {
                 USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
         uiCallback.onProjectDetected(USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
 
-        File projectBackup = new File(CURRENT_DIR,
+        File projectBackup = new File(CURRENT_DIR, "PolarLatest");
+        if (projectBackup.exists())
+            FileUtil.wipe(projectBackup);
+        projectBackup = new File(CURRENT_DIR,
                 String.format("%s-BACKUP.zip", USER_APPNAME.replace(" ", "_")));
         if (projectBackup.exists())
             projectBackup.delete();
-        projectBackup = new File(CURRENT_DIR, "PolarLatest");
-        if (projectBackup.exists())
-            FileUtil.wipe(projectBackup);
 
         LOG("[INFO]: Backing up your existing project to %s...", Main.cleanupPath(projectBackup.getAbsolutePath()));
         uiCallback.onStatusUpdate(String.format("Backing up your existing project to %s...", Main.cleanupPath(projectBackup.getAbsolutePath())));
