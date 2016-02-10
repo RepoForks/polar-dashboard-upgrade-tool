@@ -102,12 +102,13 @@ class FileUtil {
             if (!project.exists() && latest.exists()) {
                 Main.LOG("[ADD]: %s -> %s...",
                         Main.cleanupPath(latest.getAbsolutePath()), Main.cleanupPath(project.getAbsolutePath()));
-                copyFolder(latest, project, new Main.PackageCopyInterceptor() {
+                boolean result = copyFolder(latest, project, new Main.PackageCopyInterceptor() {
                     @Override
                     public boolean loggingEnabled() {
                         return true;
                     }
                 });
+                if (!result) return;
             }
             if (latest.isDirectory()) {
                 String files[] = latest.list();
@@ -168,7 +169,8 @@ class FileUtil {
                     copyFileText(source, destination, interceptor);
                 }
             } catch (Exception e) {
-                Main.LOG("[ERROR]: An error occurred while copying files: %s", e.getMessage());
+                Main.LOG("[ERROR]: An error occurred while copying %s: %s",
+                        Main.cleanupPath(source.getAbsolutePath()), e.getMessage());
                 return false;
             }
             return true;
