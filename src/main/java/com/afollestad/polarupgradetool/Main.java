@@ -76,17 +76,7 @@ public class Main extends MainBase {
         LOG("[INFO]: Migrating AndroidManifest.xml...");
         uiCallback.onStatusUpdate("Migrating AndroidManifest.xml...");
 
-        FileUtil.copyFolder(source, dest, new FileUtil.CopyInterceptor() {
-            @Override
-            public String onCopyLine(File file, String line) {
-                return line.replace("com.afollestad.polar", USER_PACKAGE);
-            }
-
-            @Override
-            public boolean skip(File file) {
-                return isBlacklisted(file);
-            }
-
+        FileUtil.copyFolder(source, dest, new PackageCopyInterceptor() {
             @Override
             public boolean loggingEnabled() {
                 return false;
@@ -128,24 +118,11 @@ public class Main extends MainBase {
         source = Util.skipPackage(source);
         dest = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
         dest = Util.skipPackage(dest);
-        FileUtil.checkDiff(dest, source, Main::isBlacklisted);
+        FileUtil.checkDiff(dest, source, Main::isBlacklisted, false);
+        // Also check for Java files that don't exist in the project code but exist in the latest code
+        FileUtil.checkDiff(dest, source, Main::isBlacklisted, true);
         // Copy Java files
-        FileUtil.copyFolder(source, dest, new FileUtil.CopyInterceptor() {
-            @Override
-            public String onCopyLine(File file, String line) {
-                return line.replace("com.afollestad.polar", USER_PACKAGE);
-            }
-
-            @Override
-            public boolean skip(File file) {
-                return isBlacklisted(file);
-            }
-
-            @Override
-            public boolean loggingEnabled() {
-                return true;
-            }
-        });
+        FileUtil.copyFolder(source, dest, new PackageCopyInterceptor());
 
         // If changelog.xml is still used, rename it to dev_changelog.xml before migrating.
         source = new File(CURRENT_DIR, VALUES_FOLDER_PATH);
@@ -196,24 +173,11 @@ public class Main extends MainBase {
         // Check for resource files that were deleted from the latest code
         source = new File(EXTRACTED_ZIP_ROOT, RES_FOLDER_PATH);
         dest = new File(CURRENT_DIR, RES_FOLDER_PATH);
-        FileUtil.checkDiff(dest, source, Main::isBlacklisted);
+        FileUtil.checkDiff(dest, source, Main::isBlacklisted, false);
+        // Also check for resource files that don't exist in the project code but exist in the latest code
+        FileUtil.checkDiff(dest, source, Main::isBlacklisted, true);
         // Copy resource files, minus blacklisted files
-        FileUtil.copyFolder(source, dest, new FileUtil.CopyInterceptor() {
-            @Override
-            public String onCopyLine(File file, String line) {
-                return line.replace("com.afollestad.polar", USER_PACKAGE);
-            }
-
-            @Override
-            public boolean skip(File file) {
-                return isBlacklisted(file);
-            }
-
-            @Override
-            public boolean loggingEnabled() {
-                return true;
-            }
-        });
+        FileUtil.copyFolder(source, dest, new PackageCopyInterceptor());
 
         // Migrate the files ignored during direct copy
         File projectValues = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "values");
@@ -267,4 +231,20 @@ public class Main extends MainBase {
         return VALUES_FOLDER_PATH;
     }
 
+    public static class PackageCopyInterceptor implements FileUtil.CopyInterceptor {
+        @Override
+        public String onCopyLine(File file, String line) {
+            return line.replace("com.afollestad.polar", USER_PACKAGE);
+        }
+
+        @Override
+        public boolean skip(File file) {
+            return isBlacklisted(file);
+        }
+
+        @Override
+        public boolean loggingEnabled() {
+            return true;
+        }
+    }
 }
