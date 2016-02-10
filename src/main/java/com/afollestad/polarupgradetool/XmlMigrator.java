@@ -78,10 +78,7 @@ public class XmlMigrator {
             return false;
         }
 
-        if (mProject.getName().equals("dev_changelog.xml")) {
-            if (!mSourceValues.containsKey("homepage_landing_icon"))
-                mSourceValues.put("homepage_landing_icon", "@mipmap/ic_launcher");
-        } else if (mProject.getName().equals("dev_customization.xml")) {
+        if (mProject.getName().equals("dev_customization.xml")) {
             // If project defaults are used in project file, set them to empty/null
             if (!mSourceValues.containsKey("wallpapers_json_url")) {
                 mSourceValues.put("wallpapers_json_url", "");
@@ -96,6 +93,9 @@ public class XmlMigrator {
             if (!mSourceValues.containsKey("feedback_email") ||
                     mSourceValues.get("feedback_email").equals("fake-email@fake-website.com")) {
                 mSourceValues.put("feedback_email", mSourceValues.get("icon_request_email"));
+            }
+            if (!mSourceValues.containsKey("homepage_landing_icon")) {
+                mSourceValues.put("homepage_landing_icon", "@mipmap/ic_launcher");
             }
         }
 
