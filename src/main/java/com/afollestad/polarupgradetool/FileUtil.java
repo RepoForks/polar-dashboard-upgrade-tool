@@ -143,7 +143,7 @@ class FileUtil {
     public static boolean copyFolder(File source, File destination, CopyInterceptor interceptor) {
         if (interceptor != null && interceptor.skip(source)) {
             if (interceptor.loggingEnabled())
-                Main.LOG("[INFO]: Ignored %s", Main.cleanupPath(source.getAbsolutePath()));
+                Main.LOG("[SKIP]: %s", Main.cleanupPath(source.getAbsolutePath()));
             return true;
         }
 
