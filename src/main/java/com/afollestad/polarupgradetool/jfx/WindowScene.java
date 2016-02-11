@@ -297,6 +297,7 @@ public class WindowScene {
         alert.getDialogPane().setPrefSize(550, 360);
         alert.setResizable(true);
         alert.showAndWait();
+        updateBtn.setVisible(true);
     }
 
     public void showSecurityInfoDialog(String path) {
