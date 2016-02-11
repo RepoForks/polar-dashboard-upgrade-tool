@@ -31,14 +31,14 @@ public class AttributeExtractor {
         this.uiCallback = uiCallback;
     }
 
-    public static String getTagName(String tag) {
-        int start = tag.indexOf('<');
-        if (start < 0) return null;
-        start += 1;
-        int end = tag.indexOf(' ', start);
-        if (end < 0) return null;
-        return tag.substring(start, end);
-    }
+//    public static String getTagName(String tag) {
+//        int start = tag.indexOf('<');
+//        if (start < 0) return null;
+//        start += 1;
+//        int end = tag.indexOf(' ', start);
+//        if (end < 0) return null;
+//        return tag.substring(start, end);
+//    }
 
     public static String getAttributeValue(String name, String tag) {
         Pattern pattern = Pattern.compile(String.format(XML_REGEX, name));
@@ -65,16 +65,16 @@ public class AttributeExtractor {
         }
     }
 
-    public static String setElementValue(String tag, String value) {
-        int start = tag.indexOf('>') + 1;
-        if (start < 0) return tag;
-        int end = tag.lastIndexOf("</");
-        if (end < 0) return tag;
-        else if (start > end) return tag;
-        StringBuilder sb = new StringBuilder(tag);
-        sb.replace(start, end, value);
-        return sb.toString();
-    }
+//    public static String setElementValue(String tag, String value) {
+//        int start = tag.indexOf('>') + 1;
+//        if (start < 0) return tag;
+//        int end = tag.lastIndexOf("</");
+//        if (end < 0) return tag;
+//        else if (start > end) return tag;
+//        StringBuilder sb = new StringBuilder(tag);
+//        sb.replace(start, end, value);
+//        return sb.toString();
+//    }
 
     public HashMap<String, String> find() {
         if (!mFile.exists()) {
