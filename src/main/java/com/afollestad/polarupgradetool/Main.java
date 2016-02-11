@@ -284,7 +284,7 @@ public class Main extends MainBase {
         if (!FileUtil.replaceInFile(new File(assetsDir, "themeinfo.xml"), "com.afollestad.polar", USER_PACKAGE, uiCallback))
             return;
 
-        final File xmlDir = new File(new File(CURRENT_DIR, VALUES_FOLDER_PATH), "xml");
+        final File xmlDir = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "xml");
         if (!FileUtil.replaceInFile(new File(xmlDir, "themecfg.xml"), "Unnamed", USER_APPNAME, uiCallback))
             return;
         if (!FileUtil.replaceInFile(new File(xmlDir, "themeinfo.xml"), "Unnamed", USER_APPNAME, uiCallback))
