@@ -1,7 +1,7 @@
 # Polar Upgrade Tool
 
 <img src="https://raw.githubusercontent.com/afollestad/polar-dashboard-upgrade-tool/master/images/showcase.JPG"
-    style="width: 300px; height: auto;" width="300px"/>
+    style="width: 600px; height: auto;" width="600px"/>
 
 PUT allows you to automatically migrate your icon packs to the latest versions of Polar, without any manual copying. **This project does not migrate your project to Polar from other dashboard templates, it upgrades existing Polar-using icon packs.**
 
