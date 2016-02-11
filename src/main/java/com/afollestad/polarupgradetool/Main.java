@@ -255,10 +255,42 @@ public class Main extends MainBase {
         if (shouldReturn) return;
 
         final File layoutDir = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "layout");
-        new File(layoutDir, "list_item_about_dev.xml").delete();
-        new File(layoutDir, "list_item_about_aidan.xml").delete();
-        new File(layoutDir, "list_item_about_tom.xml").delete();
-        new File(layoutDir, "list_item_about_daniel.xml").delete();
+        File file = new File(layoutDir, "list_item_about_dev.xml");
+        if (file.exists()) {
+            Main.LOG("[DELETE]: %s", cleanupPath(file.getAbsolutePath()));
+            file.delete();
+        }
+        file = new File(layoutDir, "list_item_about_aidan.xml");
+        if (file.exists()) {
+            Main.LOG("[DELETE]: %s", cleanupPath(file.getAbsolutePath()));
+            file.delete();
+        }
+        file = new File(layoutDir, "list_item_about_tom.xml");
+        if (file.exists()) {
+            Main.LOG("[DELETE]: %s", cleanupPath(file.getAbsolutePath()));
+            file.delete();
+        }
+        file = new File(layoutDir, "list_item_about_daniel.xml");
+        if (file.exists()) {
+            Main.LOG("[DELETE]: %s", cleanupPath(file.getAbsolutePath()));
+            file.delete();
+        }
+
+        final File assetsDir = new File(new File(CURRENT_DIR, MAIN_FOLDER), "assets");
+        if (!FileUtil.replaceInFile(new File(assetsDir, "themecfg.xml"), "Unnamed", USER_APPNAME, uiCallback))
+            return;
+        if (!FileUtil.replaceInFile(new File(assetsDir, "themeinfo.xml"), "Unnamed", USER_APPNAME, uiCallback))
+            return;
+        if (!FileUtil.replaceInFile(new File(assetsDir, "themeinfo.xml"), "com.afollestad.polar", USER_PACKAGE, uiCallback))
+            return;
+
+        final File xmlDir = new File(new File(CURRENT_DIR, VALUES_FOLDER_PATH), "xml");
+        if (!FileUtil.replaceInFile(new File(xmlDir, "themecfg.xml"), "Unnamed", USER_APPNAME, uiCallback))
+            return;
+        if (!FileUtil.replaceInFile(new File(xmlDir, "themeinfo.xml"), "Unnamed", USER_APPNAME, uiCallback))
+            return;
+        if (!FileUtil.replaceInFile(new File(xmlDir, "themeinfo.xml"), "com.afollestad.polar", USER_PACKAGE, uiCallback))
+            return;
 
         System.out.println(String.format("\nUpgrade is complete for %s!", USER_APPNAME));
         uiCallback.onStatusUpdate(String.format("Upgrade is complete for %s!", USER_APPNAME));

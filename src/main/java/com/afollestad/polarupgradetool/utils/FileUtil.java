@@ -4,6 +4,10 @@ import com.afollestad.polarupgradetool.Main;
 import com.afollestad.polarupgradetool.jfx.UICallback;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Locale;
 
 /**
@@ -119,6 +123,27 @@ public class FileUtil {
             Util.closeQuietely(in);
             Util.closeQuietely(out);
         }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static boolean replaceInFile(File file, String find, String replace, UICallback uiCallback) {
+        try {
+            Path path = Paths.get(file.getAbsolutePath());
+            byte[] content = Files.readAllBytes(path);
+            String contentStr = new String(content, "UTF-8");
+            contentStr = contentStr.replace(find, replace);
+            content = contentStr.getBytes("UTF-8");
+            file.delete();
+            Files.write(path, content, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            Main.LOG("[ERROR]: Failed to perform a find and replace in %s: %s",
+                    Main.cleanupPath(file.getAbsolutePath()), t.getMessage());
+            uiCallback.onErrorOccurred(String.format("Failed to perform a find and replace in %s: %s",
+                    Main.cleanupPath(file.getAbsolutePath()), t.getMessage()));
+            return false;
+        }
+        return true;
     }
 
     // Checks for files in the project folder that no longer exist in the latest code
