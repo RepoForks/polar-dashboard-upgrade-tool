@@ -8,6 +8,9 @@ import com.afollestad.polarupgradetool.xml.XmlElementExtractor;
 import com.afollestad.polarupgradetool.xml.XmlMigrator;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -19,6 +22,11 @@ public class Main extends MainBase {
     public static String USER_VERSION_NAME;
     public static String USER_VERSION_CODE;
     public static String USER_APPNAME;
+
+    public static String OLD_ABOUT_BUTTON1_TEXT;
+    public static String OLD_ABOUT_BUTTON1_LINK;
+    public static String OLD_ABOUT_BUTTON2_TEXT;
+    public static String OLD_ABOUT_BUTTON2_LINK;
 
     private final static String LICENSING_MODULE_ROOT = File.separator + "licensing";
     private final static String GRADLE_FILE_PATH = File.separator + "app" + File.separator + "build.gradle";
@@ -75,6 +83,79 @@ public class Main extends MainBase {
             return;
         }
         uiCallback.onStatusUpdate("Project backed up successfully!");
+
+        // Pull out information about the designer for later use, if possible
+        final File localResFolder = new File(CURRENT_DIR, RES_FOLDER_PATH);
+        final File listItemDevAbout = new File(new File(localResFolder, "layout"), "list_item_about_dev.xml");
+        if (listItemDevAbout.exists()) {
+            LOG("[INFO]: Extracting information from %s", cleanupPath(listItemDevAbout.getAbsolutePath()));
+            uiCallback.onStatusUpdate("Extracting information from " + cleanupPath(listItemDevAbout.getAbsolutePath()));
+            try {
+                final byte[] contents = Files.readAllBytes(Paths.get(listItemDevAbout.getAbsolutePath()));
+                final String contentsStr = new String(contents, "UTF-8");
+
+                final String findStrOne = "android:tag=\"";
+                int start = contentsStr.indexOf(findStrOne) + findStrOne.length();
+                int end = contentsStr.indexOf("\"", start + 1);
+                OLD_ABOUT_BUTTON1_LINK = contentsStr.substring(start, end);
+                start = contentsStr.indexOf(findStrOne, end + 1) + findStrOne.length();
+                end = contentsStr.indexOf("\"", start + 1);
+                OLD_ABOUT_BUTTON2_LINK = contentsStr.substring(start, end);
+
+                final String findStrTwo = "android:text=\"";
+                start = contentsStr.indexOf("<Button");
+                start = contentsStr.indexOf(findStrTwo, start) + findStrTwo.length();
+                end = contentsStr.indexOf("\"", start + 1);
+                OLD_ABOUT_BUTTON1_TEXT = contentsStr.substring(start, end);
+                start = contentsStr.indexOf(findStrTwo, end + 1) + findStrTwo.length();
+                end = contentsStr.indexOf("\"", start + 1);
+                OLD_ABOUT_BUTTON2_TEXT = contentsStr.substring(start, end);
+
+                final ArrayList<String> lookupNames = new ArrayList<>();
+                if (OLD_ABOUT_BUTTON1_TEXT.startsWith("@string/")) {
+                    OLD_ABOUT_BUTTON1_TEXT = OLD_ABOUT_BUTTON1_TEXT.substring(
+                            OLD_ABOUT_BUTTON1_TEXT.indexOf('/') + 1);
+                    lookupNames.add(OLD_ABOUT_BUTTON1_TEXT);
+                }
+                if (OLD_ABOUT_BUTTON2_TEXT.startsWith("@string/")) {
+                    OLD_ABOUT_BUTTON2_TEXT = OLD_ABOUT_BUTTON2_TEXT.substring(
+                            OLD_ABOUT_BUTTON2_TEXT.indexOf('/') + 1);
+                    lookupNames.add(OLD_ABOUT_BUTTON2_TEXT);
+                }
+                if (lookupNames.size() > 0) {
+                    final File valuesFolder = new File(localResFolder, "values");
+                    final String[] tagNames = new String[lookupNames.size()];
+                    final String[] lookupNamesAry = lookupNames.toArray(new String[lookupNames.size()]);
+                    for (int i = 0; i < tagNames.length; i++) tagNames[i] = "string";
+                    XmlElementExtractor extractor = new XmlElementExtractor(
+                            new File(valuesFolder, "dev_about.xml"), tagNames, lookupNamesAry, uiCallback);
+                    HashMap<String, String> result = extractor.find();
+                    if (result != null && result.size() > 0) {
+                        for (String key : result.keySet()) {
+                            if (key.equals(OLD_ABOUT_BUTTON1_TEXT))
+                                OLD_ABOUT_BUTTON1_TEXT = result.get(key);
+                            else OLD_ABOUT_BUTTON2_TEXT = result.get(key);
+                        }
+                    } else {
+                        // Try again with the other possible file
+                        extractor = new XmlElementExtractor(
+                                new File(valuesFolder, "strings.xml"), tagNames, lookupNamesAry, uiCallback);
+                        result = extractor.find();
+                        if (result != null && result.size() > 0) {
+                            for (String key : result.keySet()) {
+                                if (key.equals(OLD_ABOUT_BUTTON1_TEXT))
+                                    OLD_ABOUT_BUTTON1_TEXT = result.get(key);
+                                else OLD_ABOUT_BUTTON2_TEXT = result.get(key);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LOG("[ERROR]: Failed to read %s: %s", cleanupPath(listItemDevAbout.getAbsolutePath()), e.getMessage());
+                uiCallback.onErrorOccurred("Failed to read " + cleanupPath(listItemDevAbout.getAbsolutePath()));
+                return;
+            }
+        }
 
         // Download latest code
         if (!downloadArchive(uiCallback)) return;

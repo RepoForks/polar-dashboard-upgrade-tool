@@ -112,8 +112,28 @@ public class XmlMigrator {
                 final String tag = scanner.nextTag();
                 if (tag == null) continue;
                 final String attributeName = AttributeExtractor.getAttributeValue("name", tag);
-                if (mSourceValues.containsKey(attributeName))
+                if (attributeName == null) continue;
+                if (mSourceValues.containsKey(attributeName)) {
                     scanner.setElementValue(mSourceValues.get(attributeName));
+                } else if (attributeName.equals("about_buttons_names") ||
+                        attributeName.equals("about_buttons_links")) {
+                    if ((Main.OLD_ABOUT_BUTTON1_TEXT != null && Main.OLD_ABOUT_BUTTON2_TEXT != null) ||
+                            (Main.OLD_ABOUT_BUTTON1_LINK != null && Main.OLD_ABOUT_BUTTON2_LINK != null)) {
+                        final StringBuilder value = new StringBuilder(scanner.tagValue());
+                        int start = value.indexOf("<item>") + "<item>".length();
+                        int end = value.indexOf("</item>", start);
+                        if (attributeName.equals("about_buttons_names") &&
+                                Main.OLD_ABOUT_BUTTON1_TEXT != null) {
+                            value.replace(start, end, String.format("%s|%s",
+                                    Main.OLD_ABOUT_BUTTON1_TEXT, Main.OLD_ABOUT_BUTTON2_TEXT));
+                        } else if (attributeName.equals("about_buttons_links") &&
+                                Main.OLD_ABOUT_BUTTON1_LINK != null) {
+                            value.replace(start, end, String.format("%s|%s",
+                                    Main.OLD_ABOUT_BUTTON1_LINK, Main.OLD_ABOUT_BUTTON2_LINK));
+                        }
+                        scanner.setElementValue(value.toString());
+                    }
+                }
             }
         } catch (Exception e) {
             Main.LOG("[ERROR]: Failed to process %s for XML migration: %s",
