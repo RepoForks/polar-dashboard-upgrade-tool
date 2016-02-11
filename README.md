@@ -7,7 +7,8 @@ PUT allows you to automatically migrate your icon packs to the latest versions o
 
 See [Polar's main repository](https://github.com/afollestad/polar-dashboard) for information about Polar.
 
-PUT was designed and developed by [Aidan Follestad](https://github.com/afollestad) and [Patrick J](https://github.com/PDDStudio).
+PUT was designed and developed by [Aidan Follestad](https://github.com/afollestad) and
+[Patrick J](https://github.com/PDDStudio). The icon was designed by [Anthony Nguyen](https://plus.google.com/+AHNguyen).
 
 # Download & Wiki
 You can find the latest version of PUT's packaged binary in the [Release Page of this Repository](https://github.com/afollestad/polar-dashboard-upgrade-tool/releases).
