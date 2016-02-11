@@ -44,7 +44,6 @@ public class WindowScene {
     }
 
 
-
     public WindowSceneController getWindowSceneController() {
         return windowSceneController;
     }
@@ -159,7 +158,7 @@ public class WindowScene {
             selectedFolder = directoryChooser.showDialog(scene.getWindow());
             if (selectedFolder != null) {
                 projectLocationTextField.setText(selectedFolder.getAbsolutePath());
-                if(SecurityUtil.checkIsPolarBased(selectedFolder.getAbsolutePath())) {
+                if (SecurityUtil.checkIsPolarBased(selectedFolder.getAbsolutePath())) {
                     updateBtn.setVisible(true);
                 } else {
                     showSecurityInfoDialog(selectedFolder.getAbsolutePath());
@@ -296,10 +295,6 @@ public class WindowScene {
                 "using the backup ZIP archive placed in your project directory, or by using the following Git " +
                 "commands:\n\ngit add -A\ngit stash save\ngit stash drop");
         alert.getDialogPane().setPrefSize(550, 360);
-        alert.setOnHiding(event -> {
-            Platform.exit();
-            System.exit(0);
-        });
         alert.setResizable(true);
         alert.showAndWait();
     }
@@ -324,7 +319,7 @@ public class WindowScene {
         alert.getButtonTypes().addAll(confirmBtn, cancelBtn);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if(result.get() == confirmBtn) {
+        if (result.get() == confirmBtn) {
             updateBtn.setVisible(true);
         } else {
             updateBtn.setVisible(false);
