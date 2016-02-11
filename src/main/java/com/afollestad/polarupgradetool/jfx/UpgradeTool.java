@@ -1,20 +1,15 @@
 package com.afollestad.polarupgradetool.jfx;
 
-import com.afollestad.polarupgradetool.utils.ManifestUtils;
 import com.afollestad.polarupgradetool.utils.UpdateUtils;
 import com.afollestad.polarupgradetool.utils.UrlUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
@@ -66,12 +61,13 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
     }
 
     @Override
-    public void onUpdateCheckStarted() {}
+    public void onUpdateCheckStarted() {
+    }
 
     @Override
     public void onUpdateCheckFailed(String errorMsg) {
-        if(Platform.isFxApplicationThread()) {
-            if(!silent) {
+        if (Platform.isFxApplicationThread()) {
+            if (!silent) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Polar Upgrade Tool: Error");
                 alert.setHeaderText("Unable to check for update!");
@@ -87,20 +83,61 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
         } else Platform.runLater(() -> onUpdateCheckFailed(errorMsg));
     }
 
-    @Override
-    public void onUpdateCheckFinished(boolean isSame, String currentVersion, String latestVersion) {
-        if(Platform.isFxApplicationThread()) {
-            if(isSame) {
-                if(!silent) {
-                    //show a notification to give visual feedback that the operation was successful
-                    Notifications.create()
-                            .title("Everything is up to date")
-                            .text("Current Version: " + currentVersion + "\nLatest Version: " + latestVersion)
-                            .hideAfter(Duration.seconds(3))
-                            .position(Pos.TOP_RIGHT)
-                            .showInformation();
+    private static int[] parseVersion(String version) {
+        if (version.equals("???"))
+            return new int[]{1, 0, 0};
+        try {
+            String[] split = version.split("\\.");
+            int[] result = new int[split.length];
+            for (int i = 0; i < split.length; i++)
+                result[i] = Integer.parseInt(split[i]);
+            return result;
+        } catch (Throwable t) {
+            return new int[]{1, 0, 0};
+        }
+    }
+
+    private static boolean isNewer(int[] latest, int[] current) {
+        if (latest.length != current.length) {
+            if (latest.length > current.length) {
+                int[] newCurrent = new int[latest.length];
+                for (int i = 0; i < newCurrent.length; i++) {
+                    if (i < current.length) newCurrent[i] = current[i];
+                    else newCurrent[i] = 0;
                 }
-            } else {
+                current = newCurrent;
+            }
+            if (current.length > latest.length) {
+                int[] newLatest = new int[current.length];
+                for (int i = 0; i < newLatest.length; i++) {
+                    if (i < latest.length) newLatest[i] = latest[i];
+                    else newLatest[i] = 0;
+                }
+                latest = newLatest;
+            }
+        }
+        boolean newer = false;
+        for (int i = 0; i < latest.length; i++) {
+            if (latest[i] > current[i]) {
+                newer = true;
+                break;
+            }
+        }
+        return newer;
+    }
+
+    @Override
+    public void onUpdateCheckFinished(String currentVersion, String latestVersion) {
+        if (currentVersion.endsWith("-SNAPSHOT"))
+            currentVersion = currentVersion.substring(0, currentVersion.indexOf("-SNAPSHOT"));
+        if (latestVersion.endsWith("-SNAPSHOT"))
+            latestVersion = latestVersion.substring(0, latestVersion.indexOf("-SNAPSHOT"));
+
+        int[] current = parseVersion(currentVersion);
+        int[] latest = parseVersion(latestVersion);
+
+        if (Platform.isFxApplicationThread()) {
+            if (isNewer(latest, current)) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Polar Upgrade Tool: Information");
                 alert.setHeaderText("Update available:\n" + latestVersion);
@@ -117,15 +154,28 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
                 alert.getButtonTypes().addAll(ignBtn, okBtn);
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if(result.get() == okBtn) {
+                if (result.get() == okBtn) {
                     UrlUtils.openReleasePage();
                     Platform.exit();
                     System.exit(0);
                 }
-
+            } else {
+                if (!silent) {
+                    //show a notification to give visual feedback that the operation was successful
+                    Notifications.create()
+                            .title("Everything is up to date")
+                            .text("Current Version: " + currentVersion + "\nLatest Version: " + latestVersion)
+                            .hideAfter(Duration.seconds(3))
+                            .position(Pos.TOP_RIGHT)
+                            .showInformation();
+                }
             }
             silent = false;
-        } else Platform.runLater(() -> onUpdateCheckFinished(isSame, currentVersion, latestVersion));
+        } else {
+            final String fCurrentVersion = currentVersion;
+            final String fLatestVersion = latestVersion;
+            Platform.runLater(() -> onUpdateCheckFinished(fCurrentVersion, fLatestVersion));
+        }
     }
 
 }
