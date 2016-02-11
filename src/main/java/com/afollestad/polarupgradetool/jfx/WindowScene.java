@@ -301,11 +301,7 @@ public class WindowScene {
             System.exit(0);
         });
         alert.setResizable(true);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            Platform.exit();
-            System.exit(0);
-        }
+        alert.showAndWait();
     }
 
     public void showSecurityInfoDialog(String path) {
