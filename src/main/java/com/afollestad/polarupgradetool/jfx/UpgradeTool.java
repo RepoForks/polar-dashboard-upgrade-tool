@@ -13,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -45,6 +46,7 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
         WindowScene windowScene = new WindowScene();
         Scene scene = windowScene.getScene();
 
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/polar_upgrade_1024.png")));
         stage.setScene(scene);
         stage.show();
 
