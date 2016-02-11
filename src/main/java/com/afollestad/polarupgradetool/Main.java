@@ -254,6 +254,12 @@ public class Main extends MainBase {
         }
         if (shouldReturn) return;
 
+        final File layoutDir = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "layout");
+        new File(layoutDir, "list_item_about_dev.xml").delete();
+        new File(layoutDir, "list_item_about_aidan.xml").delete();
+        new File(layoutDir, "list_item_about_tom.xml").delete();
+        new File(layoutDir, "list_item_about_daniel.xml").delete();
+
         System.out.println(String.format("\nUpgrade is complete for %s!", USER_APPNAME));
         uiCallback.onStatusUpdate(String.format("Upgrade is complete for %s!", USER_APPNAME));
         EXTRACTED_ZIP_ROOT.delete();
