@@ -35,23 +35,26 @@ public class Util {
         return String.format("%sMB", round(value));
     }
 
-    public static String detectCodePackage(final File javaFolder) {
+    public static String detectCodePackage(File javaFolder) {
         String pkg = "";
 
         File[] contents = javaFolder.listFiles();
         if (contents == null) return pkg;
         // com
-        pkg += contents[0].getName();
+        javaFolder = contents[0];
+        pkg += javaFolder.getName();
 
         contents = javaFolder.listFiles();
         if (contents == null) return pkg;
         // afollestad
-        pkg += "." + contents[0].getName();
+        javaFolder = contents[0];
+        pkg += "." + javaFolder.getName();
 
         contents = javaFolder.listFiles();
         if (contents == null) return pkg;
         // polar
-        pkg += "." + contents[0].getName();
+        javaFolder = contents[0];
+        pkg += "." + javaFolder.getName();
 
         return pkg;
     }
