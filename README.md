@@ -15,6 +15,8 @@ You can find the latest version of PUT's packaged binary in the [Release Page of
 
 In case you need more information about how to use this Tool head over to the [Wiki Page](https://github.com/PDDStudio/polar-dashboard-upgrade-tool/wiki/Polar-Dashboard-Upgrade-Tool---Wiki).
 
+There is also some information about the upgrade tool on [Polar's Web Guide](http://afollestad.github.io/polar-dashboard/upgrades.html).
+
 The Wiki should guide people which are not common with technical/development stuff through the whole process to get their Polar-using icon pack updated.
 
 # Building and Running
