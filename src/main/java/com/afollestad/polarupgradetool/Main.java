@@ -29,6 +29,7 @@ public class Main extends MainBase {
     public static String OLD_ABOUT_BUTTON2_TEXT;
     public static String OLD_ABOUT_BUTTON2_LINK;
 
+    private final static String LIBS_FOLDER = File.separator + "app" + File.separator + "libs";
     private final static String LICENSING_MODULE_ROOT = File.separator + "licensing";
     private final static String GRADLE_FILE_PATH = File.separator + "app" + File.separator + "build.gradle";
     private final static String MAIN_FOLDER = File.separator + "app" + File.separator + "src" + File.separator + "main";
@@ -279,6 +280,11 @@ public class Main extends MainBase {
         if (file.exists()) {
             Main.LOG("[DELETE]: %s", cleanupPath(file.getAbsolutePath()));
             file.delete();
+        }
+        file = new File(CURRENT_DIR, LIBS_FOLDER);
+        if (file.exists()) {
+            Main.LOG("[DELETE]: %s", cleanupPath(file.getAbsolutePath()));
+            FileUtil.wipe(file);
         }
 
         final File assetsDir = new File(new File(CURRENT_DIR, MAIN_FOLDER), "assets");
