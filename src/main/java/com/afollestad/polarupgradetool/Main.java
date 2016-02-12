@@ -211,10 +211,11 @@ public class Main extends MainBase {
         FileUtil.checkResRename("dev_options.xml", "dev_customization.xml", uiCallback);
 
         // Pull out package name used for files
-        source = new File(EXTRACTED_ZIP_ROOT, JAVA_FOLDER_PATH);
+        source = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
         USER_CODE_PACKAGE = Util.detectCodePackage(source);
         Main.LOG("[INFO]: Code package = %s", USER_CODE_PACKAGE);
         // Check for Java files that no longer exist in the latest code
+        source = new File(EXTRACTED_ZIP_ROOT, JAVA_FOLDER_PATH);
         source = Util.skipPackage(source);
         dest = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
         dest = Util.skipPackage(dest);
