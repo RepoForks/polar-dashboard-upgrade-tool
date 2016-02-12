@@ -35,25 +35,44 @@ public class Util {
         return String.format("%sMB", round(value));
     }
 
-    public static File skipPackage(File file) {
-        // file = java folder
-        File[] contents = file.listFiles();
-        if (contents == null) return file;
-        file = contents[0];
+    public static String detectCodePackage(final File javaFolder) {
+        String pkg = "";
 
-        contents = file.listFiles();
-        if (contents == null) return file;
-        file = contents[0];
+        File[] contents = javaFolder.listFiles();
+        if (contents == null) return pkg;
+        // com
+        pkg += contents[0].getName();
 
-        contents = file.listFiles();
-        if (contents == null) return file;
-        file = contents[0];
+        contents = javaFolder.listFiles();
+        if (contents == null) return pkg;
+        // afollestad
+        pkg += "." + contents[0].getName();
 
-//        contents = file.listFiles();
-//        if (contents == null) return file;
-//        file = contents[0];
+        contents = javaFolder.listFiles();
+        if (contents == null) return pkg;
+        // polar
+        pkg += "." + contents[0].getName();
 
-        return file;
+        return pkg;
+    }
+
+    public static File skipPackage(File javaFolder) {
+        File[] contents = javaFolder.listFiles();
+        if (contents == null) return javaFolder;
+        // com
+        javaFolder = contents[0];
+
+        contents = javaFolder.listFiles();
+        if (contents == null) return javaFolder;
+        // afollestad
+        javaFolder = contents[0];
+
+        contents = javaFolder.listFiles();
+        if (contents == null) return javaFolder;
+        // polar
+        javaFolder = contents[0];
+
+        return javaFolder;
     }
 
     private Util() {

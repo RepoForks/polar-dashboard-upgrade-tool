@@ -158,7 +158,7 @@ public class FileUtil {
                 boolean result = copyFolder(latest, project, new CopyInterceptor() {
                     @Override
                     public String onCopyLine(File file, String line) {
-                        return line.replace("com.afollestad.polar", Main.USER_PACKAGE);
+                        return line.replace("com.afollestad.polar", Main.USER_CODE_PACKAGE);
                     }
 
                     @Override

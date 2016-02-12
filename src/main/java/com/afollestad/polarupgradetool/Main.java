@@ -22,6 +22,7 @@ public class Main extends MainBase {
     public static String USER_VERSION_NAME;
     public static String USER_VERSION_CODE;
     public static String USER_APPNAME;
+    public static String USER_CODE_PACKAGE;
 
     public static String OLD_ABOUT_BUTTON1_TEXT;
     public static String OLD_ABOUT_BUTTON1_LINK;
@@ -209,8 +210,11 @@ public class Main extends MainBase {
         FileUtil.checkResRename("changelog.xml", "dev_changelog.xml", uiCallback);
         FileUtil.checkResRename("dev_options.xml", "dev_customization.xml", uiCallback);
 
-        // Check for Java files that no longer exist in the latest code
+        // Pull out package name used for files
         source = new File(EXTRACTED_ZIP_ROOT, JAVA_FOLDER_PATH);
+        USER_CODE_PACKAGE = Util.detectCodePackage(source);
+        Main.LOG("[INFO]: Code package = %s", USER_CODE_PACKAGE);
+        // Check for Java files that no longer exist in the latest code
         source = Util.skipPackage(source);
         dest = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
         dest = Util.skipPackage(dest);
@@ -322,7 +326,7 @@ public class Main extends MainBase {
     public static class PackageCopyInterceptor implements FileUtil.CopyInterceptor {
         @Override
         public String onCopyLine(File file, String line) {
-            return line.replace("com.afollestad.polar", USER_PACKAGE);
+            return line.replace("com.afollestad.polar", USER_CODE_PACKAGE);
         }
 
         @Override
