@@ -148,10 +148,10 @@ public class FileUtil {
 
     // Checks for files in the project folder that no longer exist in the latest code
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void checkDiff(File project, File latest, SkipInterceptor interceptor, boolean importMode) {
+    public static boolean checkDiff(File project, File latest, SkipInterceptor interceptor, boolean importMode, UICallback callback) {
         if (importMode) {
             if (project.isDirectory() && interceptor.skip(project))
-                return;
+                return true;
             if (!project.exists() && latest.exists()) {
                 Main.LOG("[ADD]: %s -> %s...",
                         Main.cleanupPath(latest.getAbsolutePath()), Main.cleanupPath(project.getAbsolutePath()));
@@ -170,20 +170,26 @@ public class FileUtil {
                     public boolean skip(File file) {
                         return false;
                     }
-                });
-                if (!result) return;
+                }, callback);
+                if (!result) return false;
             }
             if (latest.isDirectory()) {
                 String files[] = latest.list();
+                boolean result = true;
                 for (String file : files) {
                     File srcFile = new File(project, file);
                     File destFile = new File(latest, file);
-                    checkDiff(srcFile, destFile, interceptor, true);
+                    if (!checkDiff(srcFile, destFile, interceptor, true, callback)) {
+                        result = false;
+                        break;
+                    }
                 }
+                return result;
             }
+            return true;
         } else {
             if (interceptor.skip(project))
-                return;
+                return true;
             if (project.exists() && !latest.exists()) {
                 Main.LOG("[DELETE]: %s", Main.cleanupPath(project.getAbsolutePath()));
                 if (project.isDirectory()) {
@@ -193,17 +199,22 @@ public class FileUtil {
                 }
             } else if (project.isDirectory()) {
                 String files[] = project.list();
+                boolean result = true;
                 for (String file : files) {
                     File srcFile = new File(project, file);
                     File destFile = new File(latest, file);
-                    checkDiff(srcFile, destFile, interceptor, false);
+                    if (!checkDiff(srcFile, destFile, interceptor, false, callback)) {
+                        result = false;
+                    }
                 }
+                return result;
             }
+            return true;
         }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static boolean copyFolder(File source, File destination, CopyInterceptor interceptor) {
+    public static boolean copyFolder(File source, File destination, CopyInterceptor interceptor, UICallback callback) {
         if (interceptor != null && interceptor.skip(source)) {
             if (interceptor.loggingEnabled())
                 Main.LOG("[SKIP]: %s", Main.cleanupPath(source.getAbsolutePath()));
@@ -219,7 +230,7 @@ public class FileUtil {
             for (String file : files) {
                 File srcFile = new File(source, file);
                 File destFile = new File(destination, file);
-                if (!copyFolder(srcFile, destFile, interceptor))
+                if (!copyFolder(srcFile, destFile, interceptor, callback))
                     return false;
             }
             return true;
@@ -232,8 +243,13 @@ public class FileUtil {
                     copyFileText(source, destination, interceptor);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 Main.LOG("[ERROR]: An error occurred while copying %s: %s",
                         Main.cleanupPath(source.getAbsolutePath()), e.getMessage());
+                if (callback != null) {
+                    callback.onErrorOccurred(String.format("An error occurred while copying %s: %s",
+                            Main.cleanupPath(source.getAbsolutePath()), e.getMessage()));
+                }
                 return false;
             }
             return true;

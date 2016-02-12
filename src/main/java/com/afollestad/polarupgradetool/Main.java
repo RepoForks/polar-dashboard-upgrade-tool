@@ -66,6 +66,11 @@ public class Main extends MainBase {
                 USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
         uiCallback.onProjectDetected(USER_APPNAME, USER_PACKAGE, USER_VERSION_NAME, USER_VERSION_CODE);
 
+        // Pull out package name used for files
+        File source = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
+        USER_CODE_PACKAGE = Util.detectCodePackage(source);
+        Main.LOG("[INFO]: Code package = %s", USER_CODE_PACKAGE);
+
         File projectBackup = new File(CURRENT_DIR, "PolarLatest");
         if (projectBackup.exists())
             FileUtil.wipe(projectBackup);
@@ -163,17 +168,19 @@ public class Main extends MainBase {
         if (!downloadArchive(uiCallback)) return;
 
         // Copy manifest
-        File source = new File(EXTRACTED_ZIP_ROOT, MANIFEST_FILE_PATH);
+        source = new File(EXTRACTED_ZIP_ROOT, MANIFEST_FILE_PATH);
         File dest = new File(CURRENT_DIR, MANIFEST_FILE_PATH);
         LOG("[MIGRATE]: AndroidManifest.xml...");
         uiCallback.onStatusUpdate("Migrating AndroidManifest.xml...");
 
-        FileUtil.copyFolder(source, dest, new PackageCopyInterceptor() {
+        if (!FileUtil.copyFolder(source, dest, new PackageCopyInterceptor() {
             @Override
             public boolean loggingEnabled() {
                 return false;
             }
-        });
+        }, uiCallback)) {
+            return;
+        }
 
         // Copy build.gradle
         source = new File(CURRENT_DIR, GRADLE_FILE_PATH);
@@ -186,7 +193,7 @@ public class Main extends MainBase {
         uiCallback.onStatusUpdate("Migrating the licensing module...");
         source = new File(EXTRACTED_ZIP_ROOT, LICENSING_MODULE_ROOT);
         dest = new File(CURRENT_DIR, LICENSING_MODULE_ROOT);
-        FileUtil.copyFolder(source, dest, new FileUtil.CopyInterceptor() {
+        if (!FileUtil.copyFolder(source, dest, new FileUtil.CopyInterceptor() {
             @Override
             public String onCopyLine(File file, String line) {
                 return line;
@@ -201,7 +208,9 @@ public class Main extends MainBase {
             public boolean loggingEnabled() {
                 return false;
             }
-        });
+        }, uiCallback)) {
+            return;
+        }
 
         LOG("[MIGRATE]: app module...");
         uiCallback.onStatusUpdate("Migrating the app module...");
@@ -211,29 +220,25 @@ public class Main extends MainBase {
         FileUtil.checkResRename("changelog.xml", "dev_changelog.xml", uiCallback);
         FileUtil.checkResRename("dev_options.xml", "dev_customization.xml", uiCallback);
 
-        // Pull out package name used for files
-        source = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
-        USER_CODE_PACKAGE = Util.detectCodePackage(source);
-        Main.LOG("[INFO]: Code package = %s", USER_CODE_PACKAGE);
         // Check for Java files that no longer exist in the latest code
         source = new File(EXTRACTED_ZIP_ROOT, JAVA_FOLDER_PATH);
         source = Util.skipPackage(source);
         dest = new File(CURRENT_DIR, JAVA_FOLDER_PATH);
         dest = Util.skipPackage(dest);
-        FileUtil.checkDiff(dest, source, Main::isBlacklisted, false);
+        if (!FileUtil.checkDiff(dest, source, Main::isBlacklisted, false, uiCallback)) return;
         // Also check for Java files that don't exist in the project code but exist in the latest code
-        FileUtil.checkDiff(dest, source, Main::isBlacklisted, true);
+        if (!FileUtil.checkDiff(dest, source, Main::isBlacklisted, true, uiCallback)) return;
         // Copy Java files
-        FileUtil.copyFolder(source, dest, new PackageCopyInterceptor());
+        if (!FileUtil.copyFolder(source, dest, new PackageCopyInterceptor(), uiCallback)) return;
 
         // Check for resource files that were deleted from the latest code
         source = new File(EXTRACTED_ZIP_ROOT, RES_FOLDER_PATH);
         dest = new File(CURRENT_DIR, RES_FOLDER_PATH);
-        FileUtil.checkDiff(dest, source, Main::isBlacklisted, false);
+        if (!FileUtil.checkDiff(dest, source, Main::isBlacklisted, false, uiCallback)) return;
         // Also check for resource files that don't exist in the project code but exist in the latest code
-        FileUtil.checkDiff(dest, source, Main::isBlacklisted, true);
+        if (!FileUtil.checkDiff(dest, source, Main::isBlacklisted, true, uiCallback)) return;
         // Copy resource files, minus blacklisted files
-        FileUtil.copyFolder(source, dest, new PackageCopyInterceptor());
+        if (!FileUtil.copyFolder(source, dest, new PackageCopyInterceptor(), uiCallback)) return;
 
         // Migrate the files ignored during direct copy
         final File projectValues = new File(new File(CURRENT_DIR, RES_FOLDER_PATH), "values");
@@ -333,7 +338,12 @@ public class Main extends MainBase {
     public static class PackageCopyInterceptor implements FileUtil.CopyInterceptor {
         @Override
         public String onCopyLine(File file, String line) {
-            return line.replace("com.afollestad.polar", USER_CODE_PACKAGE);
+            try {
+                return line.replace("com.afollestad.polar", USER_CODE_PACKAGE);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                return line;
+            }
         }
 
         @Override
