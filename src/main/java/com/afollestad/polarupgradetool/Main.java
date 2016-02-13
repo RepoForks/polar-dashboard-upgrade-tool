@@ -254,7 +254,8 @@ public class Main extends MainBase {
         String[] files = projectValues.list();
         boolean shouldReturn = false;
         for (String file : files) {
-            if (file.startsWith("dev_") && file.endsWith(".xml")) {
+            if ((file.startsWith("dev_") && file.endsWith(".xml")) ||
+                    file.equals("colors.xml")) {
                 migrator = new XmlMigrator(
                         new File(projectValues, file), new File(latestValues, file), uiCallback);
                 if (!migrator.process()) {
@@ -327,7 +328,9 @@ public class Main extends MainBase {
                     (file.getName().startsWith("dev_") && file.getName().endsWith(".xml")) ||
                     file.getName().equals("theme_config.xml") ||
                     file.getName().equals("strings.xml") ||
-                    file.getName().equals("fragment_homepage.xml");
+                    file.getName().equals("fragment_homepage.xml") ||
+                    file.getName().equals("HomeFragment.java") ||
+                    file.getName().equals("colors.xml");
         }
     }
 
