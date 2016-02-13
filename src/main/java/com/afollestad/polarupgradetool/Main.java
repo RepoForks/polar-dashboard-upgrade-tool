@@ -34,6 +34,7 @@ public class Main extends MainBase {
     private final static String GRADLE_FILE_PATH = File.separator + "app" + File.separator + "build.gradle";
     private final static String MAIN_FOLDER = File.separator + "app" + File.separator + "src" + File.separator + "main";
     private final static String JAVA_FOLDER_PATH = MAIN_FOLDER + File.separator + "java";
+    public final static String ASSETS_FOLDER_PATH = MAIN_FOLDER + File.separator + "assets";
     private final static String RES_FOLDER_PATH = MAIN_FOLDER + File.separator + "res";
     private final static String VALUES_FOLDER_PATH = MAIN_FOLDER + File.separator + "res" + File.separator + "values";
     private final static String MANIFEST_FILE_PATH = MAIN_FOLDER + File.separator + "AndroidManifest.xml";

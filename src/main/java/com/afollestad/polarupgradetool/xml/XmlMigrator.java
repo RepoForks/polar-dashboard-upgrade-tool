@@ -100,6 +100,14 @@ public class XmlMigrator {
                 mSourceValues.put("homepage_landing_icon", "@mipmap/ic_launcher");
             }
         }
+        if (mProject.getName().equals("dev_zooper.xml")) {
+            if (!mSourceValues.containsKey("enable_zooper_page")) {
+                final File assetsFolder = new File(Main.CURRENT_DIR, Main.ASSETS_FOLDER_PATH);
+                final File templatesFolder = new File(assetsFolder, "templates");
+                final String[] list = templatesFolder.list();
+                mSourceValues.put("enable_zooper_page", list != null && list.length > 0 ? "true" : "false");
+            }
+        }
 
         // Put original project configuration back where possible, leaving new configuration added
         StringBuilder newFileContent;
