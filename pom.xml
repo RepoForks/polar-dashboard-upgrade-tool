@@ -7,7 +7,7 @@
 
     <groupId>com.afollestad</groupId>
     <artifactId>polarupgradetool</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 
     <properties>
         <!-- plugin versions -->

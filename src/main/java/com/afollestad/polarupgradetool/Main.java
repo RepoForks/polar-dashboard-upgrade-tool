@@ -323,7 +323,8 @@ public class Main extends MainBase {
                     file.getName().equals("xml") ||
                     file.getName().equals(".gradle") ||
                     file.getName().equals(".idea") ||
-                    file.getName().equals("build");
+                    file.getName().equals("build") ||
+                    file.getName().equals(".DS_Store");
         } else {
             return file.getName().equals("list_item_about_dev.xml") ||
                     (file.getName().startsWith("dev_") && file.getName().endsWith(".xml")) ||

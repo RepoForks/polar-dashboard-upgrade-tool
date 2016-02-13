@@ -1,7 +1,6 @@
 package com.afollestad.polarupgradetool.utils;
 
 import com.afollestad.polarupgradetool.Main;
-import com.afollestad.polarupgradetool.utils.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +21,8 @@ public class ZipUtil {
         if (files == null) return fileList;
         for (File file : files) {
             if ((file.getName().equals(".git") || file.getName().equals(".idea") ||
-                    file.getName().equals(".gradle") || file.getName().equals("build")) &&
+                    file.getName().equals(".gradle") || file.getName().equals("build") ||
+                    file.getName().equals(".DS_Store") || file.getName().endsWith(".db")) &&
                     file.isDirectory()) {
                 continue;
             }
