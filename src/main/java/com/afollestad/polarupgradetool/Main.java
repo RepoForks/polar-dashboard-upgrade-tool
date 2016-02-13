@@ -330,7 +330,9 @@ public class Main extends MainBase {
                     (file.getName().startsWith("dev_") && file.getName().endsWith(".xml")) ||
                     file.getName().equals("theme_config.xml") ||
                     file.getName().equals("strings.xml") ||
-                    file.getName().equals("colors.xml");
+                    file.getName().equals("colors.xml") ||
+                    file.getName().equals("appfilter.xml") ||
+                    file.getName().equals("icon_pack.xml");
         }
     }
 
