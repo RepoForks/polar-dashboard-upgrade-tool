@@ -174,7 +174,28 @@ public class Main extends MainBase {
         LOG("[MIGRATE]: AndroidManifest.xml...");
         uiCallback.onStatusUpdate("Migrating AndroidManifest.xml...");
 
+        final File templatesFolder = new File(new File(CURRENT_DIR, ASSETS_FOLDER_PATH), "templates");
         if (!FileUtil.copyFolder(source, dest, new PackageCopyInterceptor() {
+
+            private boolean mZooper;
+
+            @Override
+            public String onCopyLine(File file, String line) {
+                line = super.onCopyLine(file, line);
+                if (line != null) {
+                    if (line.contains("<!-- Uncomment for Zooper")) {
+                        mZooper = true;
+                    } else if (mZooper) {
+                        if (!line.contains("<!--")) {
+                            mZooper = false;
+                        } else if (templatesFolder.exists()) {
+                            line = line.replace("<!--", "").replace("-->", "");
+                        }
+                    }
+                }
+                return line;
+            }
+
             @Override
             public boolean loggingEnabled() {
                 return false;
