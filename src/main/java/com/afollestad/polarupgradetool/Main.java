@@ -353,7 +353,8 @@ public class Main extends MainBase {
                     file.getName().equals("strings.xml") ||
                     file.getName().equals("colors.xml") ||
                     file.getName().equals("appfilter.xml") ||
-                    file.getName().equals("icon_pack.xml");
+                    file.getName().equals("icon_pack.xml") ||
+                    (file.getParent() != null && file.getParent().equals("drawable-nodpi"));
         }
     }
 
