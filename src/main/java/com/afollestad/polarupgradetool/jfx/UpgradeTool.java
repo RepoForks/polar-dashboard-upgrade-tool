@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -57,7 +58,7 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
     }
 
     public void updateCheck() {
-        UpdateUtils.checkForUpdate(this).execute();
+        UpdateUtils.Companion.checkForUpdate(this).execute();
     }
 
     @Override
@@ -65,7 +66,7 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
     }
 
     @Override
-    public void onUpdateCheckFailed(String errorMsg) {
+    public void onUpdateCheckFailed(@NotNull String errorMsg) {
         if (Platform.isFxApplicationThread()) {
             if (!silent) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -127,7 +128,7 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
     }
 
     @Override
-    public void onUpdateCheckFinished(String currentVersion, String latestVersion) {
+    public void onUpdateCheckFinished(@NotNull String currentVersion, @NotNull String latestVersion) {
         if (currentVersion.endsWith("-SNAPSHOT"))
             currentVersion = currentVersion.substring(0, currentVersion.indexOf("-SNAPSHOT"));
         if (latestVersion.endsWith("-SNAPSHOT"))
@@ -155,7 +156,7 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == okBtn) {
-                    UrlUtils.openReleasePage();
+                    UrlUtils.INSTANCE.openReleasePage();
                     Platform.exit();
                     System.exit(0);
                 }
@@ -178,4 +179,7 @@ public class UpgradeTool extends Application implements UpdateUtils.UpdateCallba
         }
     }
 
+    public static void main(String[] args) {
+        launch(UpgradeTool.class, args);
+    }
 }
