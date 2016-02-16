@@ -54,7 +54,7 @@ class WindowScene {
 
         //ui elements
         @FXML lateinit var projectLocationTextField: TextField
-        @FXML lateinit var browseButton: Button
+//        @FXML lateinit var browseButton: Button
         @FXML lateinit var messageListView: ListView<String>
         @FXML lateinit var updateBtn: Button
         @FXML lateinit var copyrightLabel: Hyperlink
