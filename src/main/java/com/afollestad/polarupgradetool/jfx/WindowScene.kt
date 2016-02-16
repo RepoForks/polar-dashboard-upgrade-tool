@@ -121,7 +121,7 @@ class WindowScene {
             }
 
             fileMenu!!.items.addAll(helpItem, checkUpdateItem, aboutItem)
-            boxPane!!.children.add(0, menuBar)
+            boxPane.children.add(0, menuBar)
         }
 
         fun setRootScene(scene: Scene) {
@@ -133,9 +133,9 @@ class WindowScene {
             val directoryChooser = DirectoryChooser()
             selectedFolder = directoryChooser.showDialog(scene.window)
             if (selectedFolder != null) {
-                projectLocationTextField!!.text = selectedFolder!!.absolutePath
+                projectLocationTextField.text = selectedFolder!!.absolutePath
                 if (SecurityUtil.checkIsPolarBased(selectedFolder!!.absolutePath)) {
-                    updateBtn!!.isVisible = true
+                    updateBtn.isVisible = true
                 } else {
                     showSecurityInfoDialog(selectedFolder!!.absolutePath)
                 }
@@ -149,8 +149,8 @@ class WindowScene {
 
         override fun onProjectDetected(applicationName: String, applicationPackage: String, applicationVersionName: String, applicationVersionCode: String) {
             if (Platform.isFxApplicationThread()) {
-                logMessages!!.add("Found Project: $applicationName [$applicationPackage], Version Name: $applicationVersionName, Version Code: $applicationVersionCode")
-                messageListView!!.scrollTo(logMessages!!.size - 1)
+                logMessages.add("Found Project: $applicationName [$applicationPackage], Version Name: $applicationVersionName, Version Code: $applicationVersionCode")
+                messageListView.scrollTo(logMessages.size - 1)
                 maskerPane!!.text = "Updating " + Main.USER_APPNAME
             } else {
                 Platform.runLater { onProjectDetected(applicationName, applicationPackage, applicationVersionName, applicationVersionCode) }
@@ -208,8 +208,8 @@ class WindowScene {
 
         override fun onStatusUpdate(statusMessage: String) {
             if (Platform.isFxApplicationThread()) {
-                logMessages!!.add(statusMessage)
-                messageListView!!.scrollTo(logMessages!!.size - 1)
+                logMessages.add(statusMessage)
+                messageListView.scrollTo(logMessages.size - 1)
             } else {
                 Platform.runLater { onStatusUpdate(statusMessage) }
             }
