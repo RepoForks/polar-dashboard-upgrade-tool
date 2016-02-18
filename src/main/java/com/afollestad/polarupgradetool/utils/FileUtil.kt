@@ -4,6 +4,7 @@ import com.afollestad.polarupgradetool.Main
 import com.afollestad.polarupgradetool.MainBase
 import com.afollestad.polarupgradetool.jfx.UICallback
 import java.io.*
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
@@ -80,7 +81,7 @@ object FileUtil {
             out = FileOutputStream(dst)
             writer = BufferedWriter(OutputStreamWriter(out))
 
-            src.forEachLine("UTF-8", {
+            src.forEachLine(Charset.forName("UTF-8"), {
                 val newLine = if (interceptor != null) interceptor.onCopyLine(src, it) else it;
                 writer?.write(newLine)
                 writer?.newLine()
@@ -109,9 +110,9 @@ object FileUtil {
         try {
             val path = Paths.get(file.absolutePath)
             var content = Files.readAllBytes(path)
-            var contentStr = String(content, "UTF-8")
+            var contentStr = String(content, Charset.forName("UTF-8"))
             contentStr = contentStr.replace(find, replace)
-            content = contentStr.toByteArray("UTF-8")
+            content = contentStr.toByteArray(Charset.forName("UTF-8"))
             file.delete()
             Files.write(path, content, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
         } catch (t: Throwable) {

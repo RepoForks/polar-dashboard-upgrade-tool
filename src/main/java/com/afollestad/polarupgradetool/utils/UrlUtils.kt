@@ -17,26 +17,26 @@ object UrlUtils {
     private val URL_GITHUB_RELEASES = "https://github.com/afollestad/polar-dashboard-upgrade-tool/releases"
 
     fun openPolarUpgradeToolPage() {
-        UpgradeTool.getHostService().showDocument(URL_GITHUB_PUT)
+        UpgradeTool.hostService?.showDocument(URL_GITHUB_PUT)
     }
 
     fun openPolarPage() {
-        UpgradeTool.getHostService().showDocument(URL_GITHUB_POLAR)
+        UpgradeTool.hostService?.showDocument(URL_GITHUB_POLAR)
     }
 
     fun openAfollestadGithubPage() {
-        UpgradeTool.getHostService().showDocument(URL_GITHUB_AFOLLESTAD)
+        UpgradeTool.hostService?.showDocument(URL_GITHUB_AFOLLESTAD)
     }
 
     fun openPddstudioGithubPage() {
-        UpgradeTool.getHostService().showDocument(URL_GITHUB_PDDSTUDIO)
+        UpgradeTool.hostService?.showDocument(URL_GITHUB_PDDSTUDIO)
     }
 
     fun openWikiPage() {
-        UpgradeTool.getHostService().showDocument(URL_GITHUB_WIKI)
+        UpgradeTool.hostService?.showDocument(URL_GITHUB_WIKI)
     }
 
     fun openReleasePage() {
-        UpgradeTool.getHostService().showDocument(URL_GITHUB_RELEASES)
+        UpgradeTool.hostService?.showDocument(URL_GITHUB_RELEASES)
     }
 }

@@ -8,6 +8,7 @@ import com.afollestad.polarupgradetool.utils.ZipUtil
 import com.afollestad.polarupgradetool.xml.XmlElementExtractor
 import com.afollestad.polarupgradetool.xml.XmlMigrator
 import java.io.File
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -138,7 +139,7 @@ class Main : MainBase() {
                 uiCallback.onStatusUpdate("Extracting information from ${cleanupPath(listItemDevAbout.absolutePath)}")
                 try {
                     val contents = Files.readAllBytes(Paths.get(listItemDevAbout.absolutePath))
-                    val contentsStr = String(contents, "UTF-8")
+                    val contentsStr = String(contents, Charset.forName("UTF-8"))
 
                     val findStrOne = "android:tag=\""
                     var start = contentsStr.indexOf(findStrOne) + findStrOne.length

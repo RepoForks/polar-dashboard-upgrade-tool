@@ -108,7 +108,7 @@ class WindowScene {
             helpItem.setOnAction { event -> UrlUtils.openWikiPage() }
 
             val checkUpdateItem = MenuItem("Check for Update", fontAwesome.create(FontAwesome.Glyph.DOWNLOAD).color(Color.color(0.0, 0.0, 0.0, 0.87)))
-            checkUpdateItem.setOnAction { event -> UpgradeTool.getInstance().updateCheck() }
+            checkUpdateItem.setOnAction { event -> UpgradeTool.instance?.updateCheck() }
 
             val aboutItem = MenuItem("About", fontAwesome.create(FontAwesome.Glyph.INFO).color(Color.color(0.0, 0.0, 0.0, 0.87)))
             aboutItem.setOnAction { event ->
@@ -144,7 +144,7 @@ class WindowScene {
 
         @FXML
         protected fun onHyperlinkClicked() {
-            UpgradeTool.getHostService().showDocument(UpgradeTool.GITHUB_REPO)
+            UpgradeTool.hostService?.showDocument(UpgradeTool.GITHUB_REPO)
         }
 
         override fun onProjectDetected(applicationName: String, applicationPackage: String, applicationVersionName: String, applicationVersionCode: String) {

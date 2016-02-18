@@ -4,6 +4,7 @@ import com.afollestad.polarupgradetool.AttributeExtractor
 import com.afollestad.polarupgradetool.MainBase
 import com.afollestad.polarupgradetool.jfx.UICallback
 import java.io.File
+import java.nio.charset.Charset
 import java.util.*
 import java.util.regex.Pattern
 
@@ -34,7 +35,7 @@ class XmlElementExtractor(private val mFile: File, tagNames: Array<String>?, nam
         val result = HashMap<String, String>(mPatterns.size)
 
         try {
-            mFile.forEachLine("UTF-8", {
+            mFile.forEachLine(Charset.forName("UTF-8"), {
                 for (p in mPatterns) {
                     val matcher = p.matcher(it)
                     if (matcher.find()) {

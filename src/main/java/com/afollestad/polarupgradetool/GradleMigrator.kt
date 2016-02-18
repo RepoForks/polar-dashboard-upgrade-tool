@@ -3,6 +3,7 @@ package com.afollestad.polarupgradetool
 import com.afollestad.polarupgradetool.jfx.UICallback
 import com.afollestad.polarupgradetool.utils.Util
 import java.io.*
+import java.nio.charset.Charset
 import java.util.*
 
 /**
@@ -20,7 +21,7 @@ class GradleMigrator(private val mProject: File, private val mLatest: File, priv
     fun process(): Boolean {
         val lines = ArrayList<String>()
         try {
-            mLatest.forEachLine("UTF-8", {
+            mLatest.forEachLine(Charset.forName("UTF-8"), {
                 var line = it
                 line = line.replace("output.outputFile.parent, \"MyPolarPack",
                         "output.outputFile.parent, \"${Main.USER_APPNAME}")

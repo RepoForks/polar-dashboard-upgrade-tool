@@ -5,6 +5,7 @@ import com.afollestad.polarupgradetool.Main
 import com.afollestad.polarupgradetool.MainBase
 import com.afollestad.polarupgradetool.jfx.UICallback
 import java.io.File
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -34,7 +35,7 @@ class XmlMigrator(private val mProject: File, private val mLatest: File, private
         // Read the project (local) file to pull out the user's current configuration
         try {
             val fileRaw = Files.readAllBytes(Paths.get(mProject.absolutePath))
-            val fileContent = StringBuilder(String(fileRaw, "UTF-8"))
+            val fileContent = StringBuilder(String(fileRaw, Charset.forName("UTF-8")))
             val scanner = XmlScanner(fileContent)
 
             while (!scanner.reachedEnd()) {
@@ -81,7 +82,7 @@ class XmlMigrator(private val mProject: File, private val mLatest: File, private
         val newFileContent: StringBuilder
         try {
             val fileRaw = Files.readAllBytes(Paths.get(mLatest.absolutePath))
-            newFileContent = StringBuilder(String(fileRaw, "UTF-8"))
+            newFileContent = StringBuilder(String(fileRaw, Charset.forName("UTF-8")))
             val scanner = XmlScanner(newFileContent)
 
             while (!scanner.reachedEnd()) {
@@ -114,7 +115,7 @@ class XmlMigrator(private val mProject: File, private val mLatest: File, private
         // Write the latest (remote) file's changed contents to the project (local) file
         try {
             mProject.delete()
-            mProject.writeBytes(newFileContent.toString().toByteArray("UTF-8"))
+            mProject.writeBytes(newFileContent.toString().toByteArray(Charset.forName("UTF-8")))
         } catch (e: Exception) {
             e.printStackTrace()
             MainBase.LOG("[ERROR]: Failed to write to $cleanedProjectPath: ${e.message}")

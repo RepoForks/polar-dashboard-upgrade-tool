@@ -2,6 +2,7 @@ package com.afollestad.polarupgradetool
 
 import com.afollestad.polarupgradetool.jfx.UICallback
 import java.io.File
+import java.nio.charset.Charset
 import java.util.*
 import java.util.regex.Pattern
 
@@ -28,7 +29,7 @@ class AttributeExtractor(private val mFile: File, private val mAttributeNames: A
         val results = HashMap<String, String>(mAttributeNames.size)
 
         try {
-            mFile.forEachLine("UTF-8", {
+            mFile.forEachLine(Charset.forName("UTF-8"), {
                 if (patterns != null) {
                     // XML
                     for (pattern in patterns!!) {
