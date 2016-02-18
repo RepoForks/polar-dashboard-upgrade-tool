@@ -82,8 +82,10 @@ class WindowScene {
                 updateBtn.isVisible = false
                 updateBtn.setOnAction { event ->
                     //Main.upgrade(selectedFolder.getAbsolutePath(), WindowSceneController.this);
-                    maskerPane!!.text = "Updating " + if (Main.USER_APPNAME.isEmpty()) "Project" else Main.USER_APPNAME
-                    maskerPane!!.isVisible = true
+                    with(maskerPane!!) {
+                        text = "Updating " + if (Main.USER_APPNAME.isEmpty()) "Project" else Main.USER_APPNAME
+                        isVisible = true
+                    }
                     updateBtn.isVisible = false
                     interfaceUpdateThread = InterfaceUpdateThread(selectedFolder!!.absolutePath, this)
                     interfaceUpdateThread!!.start()
@@ -91,7 +93,7 @@ class WindowScene {
 
                 this@WindowScene.updateBtn = updateBtn
                 this@WindowScene.logMessages = logMessages
-                copyrightLabel.text = "(c) %d Polar Upgrade Tool".format(Calendar.getInstance().get(Calendar.YEAR))
+                copyrightLabel.text = "(c) ${Calendar.getInstance().get(Calendar.YEAR)} Polar Upgrade Tool"
             } catch (io: IOException) {
                 io.printStackTrace()
             }
@@ -256,7 +258,7 @@ class WindowScene {
         val alert = Alert(Alert.AlertType.INFORMATION)
         alert.title = "Polar Upgrade Tool: Info"
         alert.headerText = "Update successful!"
-        alert.contentText = Main.USER_APPNAME + " is now up to date! Your configuration has been restored.\n\n" +
+        alert.contentText = "${Main.USER_APPNAME} is now up to date! Your configuration has been restored.\n\n" +
                 "Find any issues? Please report them on GitHub. You can undo changes made by this tool either " +
                 "using the backup ZIP archive placed in your project directory, or by using the following Git " +
                 "commands:\n\ngit add -A\ngit stash save\ngit stash drop"

@@ -6,15 +6,12 @@ import javafx.application.Application
 import javafx.application.HostServices
 import javafx.application.Platform
 import javafx.geometry.Pos
-import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.util.Duration
 import org.controlsfx.control.Notifications
-
-import java.util.Optional
 
 /**
  * Project : polar-dashboard-upgrade-tool
@@ -54,12 +51,14 @@ class UpgradeTool : Application(), UpdateUtils.UpdateCallback {
         if (Platform.isFxApplicationThread()) {
             if (!silent) {
                 val alert = Alert(Alert.AlertType.ERROR)
-                alert.title = "Polar Upgrade Tool: Error"
-                alert.headerText = "Unable to check for update!"
-                alert.contentText = "An error occurred while trying to resolve the latest version of Polar Upgrade Tool:\n\n$errorMsg\n\nPlease make sure you're connected to the internet and try again,\notherwise head over to the GitHub Repository."
-                alert.dialogPane.setPrefSize(550.0, 360.0)
-                alert.isResizable = false
-                alert.showAndWait()
+                with(alert) {
+                    title = "Polar Upgrade Tool: Error"
+                    headerText = "Unable to check for update!"
+                    contentText = "An error occurred while trying to resolve the latest version of Polar Upgrade Tool:\n\n$errorMsg\n\nPlease make sure you're connected to the internet and try again,\notherwise head over to the GitHub Repository."
+                    dialogPane.setPrefSize(550.0, 360.0)
+                    isResizable = false
+                    showAndWait()
+                }
             }
             silent = false
         } else
@@ -81,28 +80,29 @@ class UpgradeTool : Application(), UpdateUtils.UpdateCallback {
         if (Platform.isFxApplicationThread()) {
             if (isNewer(latest, current)) {
                 val alert = Alert(Alert.AlertType.INFORMATION)
-                alert.title = "Polar Upgrade Tool: Information"
-                alert.headerText = "Update available:\n" + latestVersion
-                alert.contentText = "A new version for Polar Upgrade Tool is available!\n\nCurrent Version: $currentVersion\nLatest Version: $latestVersion\n\nNote: It's always recommended to use the latest version."
-                alert.dialogPane.setPrefSize(500.0, 260.0)
-                alert.isResizable = false
-                val okBtn = ButtonType("Update")
-                val ignBtn = ButtonType("Skip")
+                with(alert) {
+                    title = "Polar Upgrade Tool: Information"
+                    headerText = "Update available:\n" + latestVersion
+                    contentText = "A new version for Polar Upgrade Tool is available!\n\nCurrent Version: $currentVersion\nLatest Version: $latestVersion\n\nNote: It's always recommended to use the latest version."
+                    dialogPane.setPrefSize(500.0, 260.0)
+                    isResizable = false
 
-                alert.buttonTypes.removeAll(alert.buttonTypes)
-                alert.buttonTypes.addAll(ignBtn, okBtn)
+                    val okBtn = ButtonType("Update")
+                    val ignBtn = ButtonType("Skip")
 
-                val result = alert.showAndWait()
-                if (result.get() == okBtn) {
-                    UrlUtils.openReleasePage()
-                    Platform.exit()
-                    System.exit(0)
+                    buttonTypes.removeAll(alert.buttonTypes)
+                    buttonTypes.addAll(ignBtn, okBtn)
+
+                    val result = alert.showAndWait()
+                    if (result.get() == okBtn) {
+                        UrlUtils.openReleasePage()
+                        Platform.exit()
+                        System.exit(0)
+                    }
                 }
-            } else {
-                if (!silent) {
-                    //show a notification to give visual feedback that the operation was successful
-                    Notifications.create().title("Everything is up to date").text("Current Version: $currentVersion\nLatest Version: $latestVersion").hideAfter(Duration.seconds(3.0)).position(Pos.TOP_RIGHT).showInformation()
-                }
+            } else if (!silent) {
+                //show a notification to give visual feedback that the operation was successful
+                Notifications.create().title("Everything is up to date").text("Current Version: $currentVersion\nLatest Version: $latestVersion").hideAfter(Duration.seconds(3.0)).position(Pos.TOP_RIGHT).showInformation()
             }
             silent = false
         } else {
@@ -133,7 +133,6 @@ class UpgradeTool : Application(), UpdateUtils.UpdateCallback {
             } catch (t: Throwable) {
                 return intArrayOf(1, 0, 0)
             }
-
         }
 
         @Suppress("NAME_SHADOWING")

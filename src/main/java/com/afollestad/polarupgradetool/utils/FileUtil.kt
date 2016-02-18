@@ -232,7 +232,7 @@ object FileUtil {
     }
 }
 
-public interface CopyInterceptor {
+interface CopyInterceptor {
     fun skip(file: File): Boolean
 
     fun onCopyLine(file: File, line: String): String
