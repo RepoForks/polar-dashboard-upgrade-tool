@@ -50,14 +50,9 @@ object ManifestUtils {
             val jarFile = JarFile(jarName)
             val attributes = jarFile.manifest.mainAttributes ?: return VERSION_UNKNOWN
 
-            for (key in attributes.keys) {
-                if (key.toString() == MANIFEST_PUT_VERSION) return attributes[key].toString()
-            }
-
-        } catch (io: IOException) {
-            io.printStackTrace()
+            return attributes.keys.filter { it.toString() == MANIFEST_PUT_VERSION }.first().toString();
+        } catch (ignored: IOException) {
         }
-
         return VERSION_UNKNOWN
     }
 
